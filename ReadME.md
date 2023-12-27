@@ -1,3 +1,5 @@
+Description:
+Watsapp bot used by Boshoff Computer Solutions for better communication
 
 Dependencies :
     - g++ from gcc 12.2 (compile time)
