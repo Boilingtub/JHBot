@@ -16,10 +16,11 @@ struct Dictionary {
 };
 
 struct Dictionary dictionary_constructor(int (*compare)
-                                         (void *key_one,
-                                          void *key_two));
+                                        (void *key_one,
+                                        void *key_two));
 
 void dictionary_destructor(struct Dictionary *dictionary);
 
-int compare_string_keys(void* entry_one, void* entry_two);
+int dict_compare_entry_string_keys(void* entry_one, void* entry_two);
+int dict_compare_search_string_keys(void *entry , void *search_string); 
 #endif

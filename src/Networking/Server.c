@@ -5,7 +5,7 @@
 
 struct Server server_constructor(int domain , int service , int protocol , 
                                  u_long interface , int port , int backlog ,
-                                 void(*launch)(struct Server *server)) {
+                                 char*(*launch)(struct Server *server)) {
     struct Server server;
 
     server.domain = domain;

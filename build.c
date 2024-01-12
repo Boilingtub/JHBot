@@ -8,11 +8,11 @@
 #define SRC_DIR "src/"
 #define OUTPUT_DIR "output/"
 #define PROGRAM_NAME "BCS_bot"
-#define C_FILES "bcs_bot.c Whatsapp/whatsapp_bot.c Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c"
+#define C_FILES "bcs_bot.c Whatsapp/whatsapp_bot.c Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c"
 #define INCLUDE "" 
 #define LIB "-lcurl"
-#define COMPILE_FLAGS ""
-#define RUN_PROGRAM_ON_COMPILE 1
+#define COMPILE_FLAGS " -g "
+#define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
 
 //concatonation functions

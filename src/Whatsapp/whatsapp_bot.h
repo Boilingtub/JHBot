@@ -2,9 +2,9 @@
 #define BCS_BOT_INCLUDE
 
 #include <curl/curl.h>
+#include "../Networking/Server.h"
 
-int read_file(char* filename , char* *content);
-int write_file(char* filename, char* content);
+
 
 struct whatsappCURL {
     char URL[64];
@@ -13,17 +13,30 @@ struct whatsappCURL {
     char* Data;
 };
 
+struct WhatsappMessage {
+    char* name;
+    char* wa_id;
+    char* from;
+    char* id;
+    char* timestamp;
+    char* type;
+    char* text_body;
+};
 struct WhatsappBot{
     char* name;
     struct whatsappCURL whatsappcurl;
-    void (*parse_received_msg)(char *msg);
-    void (*interpret_msg)(struct WhatsappBot *bot, char* msg);
-    int (*send_whatsapp_msg)(struct WhatsappBot *bot);
+    struct Server webhook;
+    struct WhatsappMessage received_message;
+    void (*read_text_file)(char* file_path, char** buffer);
+    void (*write_text_file)(char* file_path, char* buffer);
+    void (*parse_received_msg)(struct WhatsappBot *bot,char *msg);
+    int  (*send_whatsapp_msg)(struct WhatsappBot *bot);
     void (*set_bot_curl_properties)(struct WhatsappBot *bot,
                                    char URL[] , char Authorization[],
                                    char ContentType[], char Data[],
                                    unsigned long data_size);
 };
-struct WhatsappBot whatsappbot_constructor(char* name);
+struct WhatsappBot whatsappbot_constructor(char* name,int Networking);
 
+void whatsappbot_destructor(struct WhatsappBot *bot);
 #endif

@@ -49,7 +49,7 @@ void destroy_node_ll(struct Node *node_to_destroy) {
 
 struct Node * iterate_ll(struct LinkedList *linked_list,int index) {
     if (index < 0 || index >= linked_list->length) {
-        printf("Index out of bound... on linked list\n");
+        printf("\nIndex out of bound... on linked list\n");
         return NULL;
     }
 

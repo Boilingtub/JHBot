@@ -19,11 +19,9 @@ void pop(struct Queue *queue) {
 struct Queue queue_constructor() {
     struct Queue queue;
     queue.list = linked_list_constructor();
-    
     queue.push = push;
     queue.pop = pop;
     queue.peek = peek;
-
     return queue;
 }
 void queue_destructor(struct Queue *queue) {
