@@ -3,7 +3,7 @@ Watsapp bot used by Boshoff Computer Solutions for better communication
 
 Dependencies :
     1. libcurl (Runtime)
-    1. gcc (compile time)
-    1. libcurl-devel (Compile time)
+    2. gcc (compile time)
+    3. libcurl-devel (Compile time)
 
 with included python implementation
