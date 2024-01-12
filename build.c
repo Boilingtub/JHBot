@@ -11,7 +11,7 @@
 #define C_FILES "bcs_bot.c Whatsapp/whatsapp_bot.c Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c"
 #define INCLUDE "" 
 #define LIB "-lcurl"
-#define COMPILE_FLAGS " -g "
+#define COMPILE_FLAGS "  "
 #define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
 

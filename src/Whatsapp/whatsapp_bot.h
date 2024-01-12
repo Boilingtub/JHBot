@@ -28,15 +28,18 @@ struct WhatsappBot{
     struct Server webhook;
     struct WhatsappMessage received_message;
     void (*read_text_file)(char* file_path, char** buffer);
+    void (*set_webhook_properties)(struct WhatsappBot *bot,
+                                   int domain, int service, int protocol,
+                                   u_long interface, int port, int backlog);
     void (*write_text_file)(char* file_path, char* buffer);
     void (*parse_received_msg)(struct WhatsappBot *bot,char *msg);
     int  (*send_whatsapp_msg)(struct WhatsappBot *bot);
-    void (*set_bot_curl_properties)(struct WhatsappBot *bot,
+    void (*set_sending_properties)(struct WhatsappBot *bot,
                                    char URL[] , char Authorization[],
                                    char ContentType[], char Data[],
                                    unsigned long data_size);
 };
-struct WhatsappBot whatsappbot_constructor(char* name,int Networking);
+struct WhatsappBot whatsappbot_constructor(char* name);
 
 void whatsappbot_destructor(struct WhatsappBot *bot);
 #endif

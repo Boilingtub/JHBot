@@ -33,6 +33,20 @@ struct HTTPRequest http_request_constructor(char *request_input_string,
     char *request_line = strtok(request_string , "\n");
     char *header_fields = strtok(NULL, "|");
     char *body = strtok(NULL , "|");
+    
+    if(strlen(request_line) < 2) {
+        printf("request line incorrectly formatted\n");
+        exit(1);
+    }
+    if(strlen(header_fields) < 2) {
+        printf("request line incorrectly formatted\n");
+        exit(1);
+    }
+    if(strlen(body) < 2) {
+        printf("request line incorrectly formatted\n");
+        exit(1);
+    }
+
 
     
     extract_request_line_fields(&request, request_line);

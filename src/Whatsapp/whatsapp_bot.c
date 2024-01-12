@@ -9,10 +9,13 @@
 #include "../Networking/Server.h"
 
 char* launch_web_hook(struct Server *server);
+void set_webhook_properties(struct WhatsappBot *bot,
+                             int domain,int service,int protocol,
+                             u_long iterface,int port,int backlog);
 void parse_received_msg(struct WhatsappBot *bot, char* msg);
 void parse_whatsapp_body_text(struct Dictionary *body_fields,char* body_text);
 int send_whatsapp_msg(struct WhatsappBot *bot);
-void set_bot_curl_properties(struct WhatsappBot *bot,
+void set_sending_properties(struct WhatsappBot *bot,
                              char URL[], char Autorization[],
                              char ContentType[], char Data[],
                              unsigned long data_size);
@@ -21,17 +24,15 @@ void write_text_file(char* file_path, char* buffer);
 void assign_string(char** dest,char* source);
 void HTTPRequest_Body_To_WhatsappMessage(struct WhatsappBot *bot,struct Dictionary body); 
 
-struct WhatsappBot whatsappbot_constructor(char* name, int Networking) {
+struct WhatsappBot whatsappbot_constructor(char* name) {
     struct WhatsappBot new_bot;
-    if(Networking == 1)
-        new_bot.webhook = server_constructor(AF_INET, SOCK_STREAM, 0,INADDR_ANY, 80, 10,launch_web_hook);
     new_bot.name = name;
     new_bot.read_text_file = read_text_file;
     new_bot.write_text_file = write_text_file;
-    
+    new_bot.set_webhook_properties = set_webhook_properties ;
     new_bot.parse_received_msg = parse_received_msg;
     new_bot.send_whatsapp_msg = send_whatsapp_msg;
-    new_bot.set_bot_curl_properties = set_bot_curl_properties;
+    new_bot.set_sending_properties = set_sending_properties;
     return new_bot;
     
 }
@@ -77,8 +78,17 @@ char* launch_web_hook(struct Server *server) {
     }
 }
 
+void set_webhook_properties(struct WhatsappBot *bot,
+                             int domain,int service,int protocol,
+                             u_long iterface,int port,int backlog) {
+    printf("setting web-properties\n");
+    bot->webhook = server_constructor(domain , service , protocol,
+                                      iterface,port,backlog,
+                                      launch_web_hook);
+    
+}
 
-void set_bot_curl_properties(struct WhatsappBot *bot,
+void set_sending_properties(struct WhatsappBot *bot,
                              char URL[] , char Autorization[],
                              char ContentType[], char Data[],
                              unsigned long data_size) {
@@ -97,8 +107,9 @@ void assign_string(char** dest , char* source) {
 
 void HTTPRequest_Body_To_WhatsappMessage(struct WhatsappBot *bot,
                                          struct Dictionary body) {
+    
     assign_string(&bot->received_message.name,
-                  body.search(&body,"name",sizeof("name")));   
+                  body.search(&body,"name",sizeof("name")));  
     assign_string(&bot->received_message.from,
                   body.search(&body,"from",sizeof("from")));
     assign_string(&bot->received_message.id,
@@ -127,7 +138,6 @@ void check_for_carage_return_char(char* input) {
     for(int i;i < strlen(input);i++) {
         if((int)input[i] == 0xD) {
             printf("carage return character detected, attempting remove...\n");
-
         }
     }
 
@@ -136,6 +146,7 @@ void check_for_carage_return_char(char* input) {
 void parse_received_msg(struct WhatsappBot *bot, char* msg) {
     remove_all_chars(msg , 0xD);
     struct HTTPRequest sent_request = http_request_constructor(msg , NULL);
+    
     /*for(int i = 0; i < sent_request.body.keys.length; i++) {
                 char* key_name = (char*)sent_request.body.keys
                                  .retreive(&sent_request.body.keys,i);
@@ -144,8 +155,9 @@ void parse_received_msg(struct WhatsappBot *bot, char* msg) {
                                            key_name,sizeof(strlen(key_name)));
                 printf("key: %s\nvalue: %s\n",key_name,value); 
     }*/
+
     HTTPRequest_Body_To_WhatsappMessage(bot,sent_request.body);
-    http_request_destructor(&sent_request);
+    //http_request_destructor(&sent_request);
 }
 
 int send_whatsapp_msg(struct WhatsappBot *bot) {
