@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 
 // configure project setup here
-#define COMPILER "clang"
+#define COMPILER "gcc"
 #define CURRENT_WORKING_DIR "../"
 #define SRC_DIR "src/"
 #define OUTPUT_DIR "output/"
