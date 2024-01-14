@@ -6,7 +6,7 @@ struct Node {
     struct Node *previous;
 };
 
-struct Node node_constructor(void *data, int size);
-void node_destructor(struct Node *node);
+struct Node Node_constructor(void *data, int size);
+void Node_destructor(struct Node *node);
 
 #endif

@@ -1,46 +1,42 @@
-from ctypes import *
-c_lib = CDLL('./libwhatsappbot.so')
+from ctypes import byref
+import socket
+from JHBotPythonBindings import *
 
-print("Starting Whatsapp_bot")
+Send_URL = b"127.0.0.1"
 
-class WhatsappMessage(Structure):
-    _fields_=[("name",c_char_p),
-              ("wa_id",c_char_p),
-              ("from",c_char_p),
-              ("id",c_char_p),
-              ("timestamp",c_char_p),
-              ("type",c_char_p),
-              ("text_body",c_char_p)]
+Header_Autorization = b"Authorization: Bearer EAAzl9nSKvWYBO0LY3NfQYtZC6s4UcofwzpZAnhPt0MHKoDIdF6TQGaLbe6gZBvkuFkHd42yRTtHWZAaJ870AJTOoZB9MfJHhSQJit13eLDUj19vReoaSAv4HBRPVs2nlqAbWW8QcetaodPDsYMcHMFafFNE10Nuxi1HtgtQrTE5JPMk3ksmk08y2hu76C6GkyHp7JSymZC6hObalsxdaCjBN5y6Rmg"
 
-class WhatsappCurl(Structure):
-    _fields_=[("URL",c_char_p),
-              ("Header_Autorization",c_char_p),
-              ("Header_ContentType",c_char_p),
-              ("Data",c_char_p)]
+Header_ContentType = b"Content-Type: application/json"
 
-class Server(Structure):
-    _fields_=[("domain"c_int),
-              ("service",c_int),
-              ("protocol",c_int),
-              ("interface"c_ulong),
-              ("port",c_int),
-              ("backlog",c_int)]
+to_do = "server"
 
-class WhatsappBot(Structure):
-    _fields_=[("name",c_char_p),
-              ("whatsappcurl",WhatsappCurl),
-              ("webhook",Server),
-              ("received_message",WhatsappMessage),
-              ("read_text_file",c_),
-              (),
-              ()
-              ]
-        
+if (to_do == "test"):
+    print("send test")
+    Headers = (c_char_p*2)()
+    Headers[0] = c_char_p(Header_Autorization)
+    Headers[1] = c_char_p(Header_ContentType)
+    data = c_char_p()
+    read_text_file(b"../samples/json.txt",byref(data))
+    post_data(b"127.0.0.1",Headers,2,data);
 
-whatsappbot_constructor = c_lib.whatsappbot_constructor
-whatsappbot_constructor.restype = POINTER(WhatsappBot)
-whatsappbot_constructor.argtypes = [c_char_p,c_int]
+if(to_do == "server"):
+    print("server test")
+    server = Server_constructor(socket.AF_INET,socket.SOCK_STREAM,0,socket.INADDR_ANY,80,10);
+    while(True):
+        response = launch_listner_server(byref(server))
+        #body_str = Dictionary_print(byref(response.body))
+        #print(body_str.value)
 
-bcs_bot = whatsappbot_constructor(b"bosshof 1",1)
+if(to_do == "parse"):
+    print("Parse test")
+    data = c_char_p()
+    read_text_file(b"../samples/newest_sample.txt",byref(data))
+    response = parse_to_httpresponse(data);
+    body_str = Dictionary_print(byref(response.body))
+    #print(body_str)
+    
 
-print(whatsapp_bot.fields.name);
+
+
+    
+

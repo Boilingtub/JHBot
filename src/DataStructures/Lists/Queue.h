@@ -5,13 +5,12 @@
 
 struct Queue {
     struct LinkedList list;
-    void (*push)(struct Queue *queue, void *data,
-                 int size);
-    void* (*peek)(struct Queue *queue);
-    void (*pop)(struct Queue *queue);
 };
 
-struct Queue queue_constructor(void);
-void queue_destructor(struct Queue *queue);
+struct Queue Queue_constructor(void);
+void Queue_destructor(struct Queue *queue);
 
+void Queue_push(struct Queue *queue, void *data,int size); 
+void* Queue_peek(struct Queue *queue); 
+void Queue_pop(struct Queue *queue);
 #endif

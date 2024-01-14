@@ -3,9 +3,8 @@
 #include <stdio.h>
 
 
-struct Server server_constructor(int domain , int service , int protocol , 
-                                 u_long interface , int port , int backlog ,
-                                 char*(*launch)(struct Server *server)) {
+struct Server Server_constructor(int domain , int service , int protocol , 
+                                 u_long interface , int port , int backlog) {
     struct Server server;
 
     server.domain = domain;
@@ -31,13 +30,6 @@ struct Server server_constructor(int domain , int service , int protocol ,
         perror("Failed to bind socket...\n");
         exit(1);
     }
-
-    if (listen(server.socket , server.backlog) < 0) {
-        perror("Failed to start listening...\n");
-        exit(1);
-    }
-
-    server.launch = launch;
 
     return server;
 } 
