@@ -10,7 +10,7 @@
 #define CURRENT_WORKING_DIR "../"
 #define SRC_DIR "src/"
 #define OUTPUT_DIR "objects/"
-#define PROGRAM_NAME "libJHbot.so"
+#define PROGRAM_NAME "libJHBot.so"
 #define C_FILES "Bot/bot.c Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c FLI/Python/python_fli.c DataGenerators/Whatsapp/WhatsappDataGen.c"
 #define INCLUDE "" 
 #define LIB "-lcurl"
@@ -95,5 +95,6 @@ int main() {
         c_file = strtok(NULL," ");
     }
     system(link_so(o_files));
+    system("cp libJHBot.so ../src/python_implementation");
 
 }
