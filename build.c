@@ -11,7 +11,7 @@
 #define SRC_DIR "src/"
 #define OUTPUT_DIR "output/"
 #define PROGRAM_NAME "BCS_bot"
-#define C_FILES "bcs_bot.c Bot/bot.c Bot/bot.h Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c"
+#define C_FILES "bcs_bot.c Bot/bot.c Bot/bot.h Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c FLI/Python/python_fli.c DataGenerators/Whatsapp/WhatsappDataGen.c"
 #define INCLUDE "" 
 #define LIB "-lcurl"
 #define COMPILE_FLAGS "  "
