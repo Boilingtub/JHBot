@@ -32,6 +32,18 @@ char * generate_whatsapp_text_message(char* recipient_type,char* to,char* body) 
     return cJSON_PrintUnformatted(root);
 }
 
+char* generate_whatsapp_reply_message(char* recipient_type,char* to, char* message_id, char* body) {
+    cJSON *root = generate_whatsapp_data(recipient_type,to);
+    cJSON *context = cJSON_CreateObject();
+    cJSON_AddItemToObject(context,"message_id",cJSON_CreateString(message_id));
+    cJSON_AddItemToObject(root,"context",context);
+    cJSON* text =  cJSON_CreateObject(); 
+    cJSON_AddItemToObject(text,"body",cJSON_CreateString(body));
+    cJSON_AddItemToObject(text,"preview_url",cJSON_CreateFalse());
+    cJSON_AddItemToObject(root,"text",text);
+    return cJSON_PrintUnformatted(root);
+}
+
 /*
 recipient_type -> group / individual
 to -> group-id / phone number

@@ -39,6 +39,10 @@ create_whatsapp_text_message = c_lib.generate_whatsapp_text_message;
 create_whatsapp_text_message.restype = c_char_p
 create_whatsapp_text_message.argtypes = [c_char_p,c_char_p,c_char_p]
 
+create_whatsapp_reply_message = c_lib.generate_whatsapp_reply_message
+create_whatsapp_reply_message.restype = c_char_p
+create_whatsapp_reply_message.argtypes = [c_char_p,c_char_p,c_char_p,c_char_p]
+
 clear_httprequests = c_lib.python_clear_httprequests
 clear_httprequests.restype = None
 clear_httprequests.argtypes = None
