@@ -10,7 +10,7 @@
 #define CURRENT_WORKING_DIR "../"
 #define SRC_DIR "src/"
 #define OUTPUT_DIR "objects/"
-#define PROGRAM_NAME "libJHBot.so"
+#define PROGRAM_NAME "libJHBot"
 #define C_FILES "Bot/bot.c Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c FLI/Python/python_fli.c DataGenerators/Whatsapp/WhatsappDataGen.c"
 #define INCLUDE "" 
 #define LIB "-lcurl"
@@ -19,6 +19,11 @@
 #define RUN_FLAGS " test "
 #define STATIC_COMPILE_FLAGS " -shared "
 
+#ifdef _WIN32
+#define EXTENSION ".dll"
+#elif __linux__
+#define EXTENSION ".so"
+#endif
 //concatonation functions
 #define STR(x) #x
 
@@ -51,15 +56,16 @@ char* link_so(char* o_files) {
     char *buffer = malloc(3000);
     strcat(buffer,COMPILER);
     strcat(buffer," ");
-    strcat(buffer,LIB);
-    strcat(buffer," ");
     strcat(buffer,STATIC_COMPILE_FLAGS);
     strcat(buffer," ");
     strcat(buffer,o_files);
     strcat(buffer," ");
+    strcat(buffer,LIB);
+    strcat(buffer," ");
     strcat(buffer,"-o");
     strcat(buffer," ");
     strcat(buffer,PROGRAM_NAME);
+    strcat(buffer,EXTENSION);
     strcat(buffer," ");
     return buffer;
 }
@@ -95,6 +101,4 @@ int main() {
         c_file = strtok(NULL," ");
     }
     system(link_so(o_files));
-    system("cp libJHBot.so ../src/python_implementation");
-
 }

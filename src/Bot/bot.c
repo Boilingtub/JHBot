@@ -54,7 +54,7 @@ void remove_all_chars(char* str, char c) {
 
 int check_for_carage_return_char(char* input) {
     printf("checking for carage return\n");
-    for(int i;i < strlen(input);i++) {
+    for(int i = 0;i < strlen(input);i++) {
         if((int)input[i] == 0xD) {
             printf("carage return character detected, attempting remove...\n");
             remove_all_chars(input,0xD);

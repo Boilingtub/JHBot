@@ -1,8 +1,13 @@
 #ifndef WHATSAPP_DATA_GEN_INCLUDE
 #define WHATSAPP_DATA_GEN_INCLUDE
-
-char * generate_whatsapp_template_message(char * recipient_type, char* to, char* name, char* language_code);
-char * generate_whatsapp_text_message(char* recipient_type,char* to,char* body) ;
-char*  generate_whatsapp_reply_message(char* recipient_type,char* to, char* message_id, char* body);
-
+#include "../../Parsers/cjson/cJSON.h"
+char* whatsapp_message_to_string(cJSON* message);
+cJSON* create_whatsapp_message(char* recipient_type, char* to);
+int Make_Template(cJSON* message ,char* name , char* language_code);
+int Make_Text(cJSON* message , char* body); 
+int Make_reply(cJSON* message , char* msg_id);
+int Make_interactive(cJSON* message,char* header,char*body, char* footer,
+                     cJSON* action);
+    cJSON* create_action_list(char* action_name, cJSON* sections[], int section_count);
+    cJSON* create_section(char* section_title, char* options[], int option_count);
 #endif

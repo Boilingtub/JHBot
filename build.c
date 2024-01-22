@@ -10,8 +10,8 @@
 #define CURRENT_WORKING_DIR "../"
 #define SRC_DIR "src/"
 #define OUTPUT_DIR "output/"
-#define PROGRAM_NAME "BCS_bot"
-#define C_FILES "bcs_bot.c Bot/bot.c Bot/bot.h Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c FLI/Python/python_fli.c DataGenerators/Whatsapp/WhatsappDataGen.c"
+#define PROGRAM_NAME "bot_test"
+#define C_FILES "main.c Bot/bot.c Bot/bot.h Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c FLI/Python/python_fli.c DataGenerators/Whatsapp/WhatsappDataGen.c"
 #define INCLUDE "" 
 #define LIB "-lcurl"
 #define COMPILE_FLAGS "  "
@@ -32,7 +32,6 @@ void check_if_dir_exists() {
         mkdir(OUTPUT_DIR,0777);
     } 
 }
-
 
 int main() {
     check_if_dir_exists();
