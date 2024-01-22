@@ -8,6 +8,8 @@ Header_ContentType = b"Content-Type: application/json"
 
 Headers = char_p_array(Header_Autorization,Header_ContentType)
 
+initialize_bot()
+
 if(sys.argv[1] == "send"):
     print("SEND TEST")
     data = read_text_file(b"../../samples/json.txt")
@@ -15,7 +17,7 @@ if(sys.argv[1] == "send"):
 
 if(sys.argv[1] == "server"):
     print("SERVER TEST")
-    bot.initialize_bot();
+    initialize_bot();
     listner_server = create_new_listner_server(socket.AF_INET,socket.SOCK_STREAM,0,socket.INADDR_ANY,80,10)
     while(True):
         http_response =  launch_listner_server(listner_server)
