@@ -1,8 +1,12 @@
+#ifdef _WIN32
+#include <winsock2.h>
+#elif __linux__
 #include <netinet/in.h>
+#include <sys/socket.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 #include "DataGenerators/Whatsapp/WhatsappDataGen.h"
 #include "DataStructures/Dictionary/Dictionary.h"
 #include "Networking/HttpRequest.h"

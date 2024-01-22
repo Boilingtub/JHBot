@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#ifdef _WIN32
+#include <io.h>
+#elif __linux__
+#include <unistd.h>
+#endif
 #include <curl/curl.h>
 #include <curl/easy.h>
-#include <unistd.h>
 #include "bot.h"
 #include "../Networking/HttpRequest.h"
 #include "../Networking/Server.h"

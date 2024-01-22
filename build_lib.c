@@ -13,7 +13,13 @@
 #define PROGRAM_NAME "libJHBot"
 #define C_FILES "Bot/bot.c Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c FLI/Python/python_fli.c DataGenerators/Whatsapp/WhatsappDataGen.c"
 #define INCLUDE "" 
+
+#ifdef _WIN32
+#define LIB " -L./curl-8.5.0_5-win64-mingw/lib/ -lcurl"
+#elif __linux__
 #define LIB "-lcurl"
+#endif
+
 #define COMPILE_FLAGS " -c -fPIC "
 #define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
@@ -35,7 +41,11 @@ void check_if_dir_exists() {
         closedir(dir);
     } 
     else if (ENOENT == errno) {
+        #ifdef _WIN32
+        mkdir(OUTPUT_DIR);
+        #elif __linux__
         mkdir(OUTPUT_DIR,0777);
+        #endif
     } 
 }
 
