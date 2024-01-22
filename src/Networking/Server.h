@@ -12,7 +12,7 @@ struct Server {
     int domain;
     int service;
     int protocol;
-    unsigned long interface;
+    unsigned long face;
     int port;
     int backlog;
     struct sockaddr_in address;
@@ -20,5 +20,5 @@ struct Server {
 };
 
 struct Server Server_constructor(int domain , int service , int protocol , 
-                                 unsigned long interface , int port , int backlog); 
+                                 unsigned long face , int port , int backlog); 
 #endif 

@@ -4,19 +4,19 @@
 
 
 struct Server Server_constructor(int domain , int service , int protocol , 
-                                 unsigned long interface , int port , int backlog) {
+                                 unsigned long face , int port , int backlog) {
     struct Server server;
 
     server.domain = domain;
     server.service = service;
     server.protocol = protocol;
-    server.interface = interface;
+    server.face = face;
     server.port = port;
     server.backlog = backlog;
 
     server.address.sin_family = domain;
     server.address.sin_port = htons(port);
-    server.address.sin_addr.s_addr = htonl(interface);
+    server.address.sin_addr.s_addr = htonl(face);
 
     server.socket = socket(domain , service , protocol);
 

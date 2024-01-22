@@ -7,7 +7,7 @@
 
 void python_initialize_bot();
 int python_create_new_listner_server(int domain,int service,int protocol,
-                               unsigned long interface,int port,int backlog);
+                               unsigned long face,int port,int backlog);
 int python_launch_listner_server(int select);
 int python_parse_httprequest(char* data); 
 char* python_httprequest_search(int select, char* part ,char* field);
@@ -36,10 +36,10 @@ void python_initialize_bot() {
 }
 
 int python_create_new_listner_server(int domain,int service,int protocol,
-                               unsigned long interface,int port,int backlog) {
+                               unsigned long face,int port,int backlog) {
      
     struct Server new_server = Server_constructor(domain,service,protocol,
-                                       interface,port,backlog);
+                                       face,port,backlog);
     LinkedList_insert(&server_list,server_list.length,&new_server,sizeof(new_server)+2);
     return server_list.length-1;
 }

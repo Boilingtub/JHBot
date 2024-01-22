@@ -7,7 +7,7 @@ char* read_text_file(char* file_path);
 void write_text_file(char* file_path, char* buffer);
 
 void set_global_listner_server(int domain,int service,int protocol,
-                               unsigned long interface,int port,int backlog);
+                               unsigned long face,int port,int backlog);
 
 struct HTTPRequest launch_global_listner_server();
 
