@@ -22,7 +22,7 @@
 #define LIB "-lcurl"
 #endif
 
-#define COMPILE_FLAGS " -c -fPIC "
+#define COMPILE_FLAGS " -Wall -c -fPIC "
 #define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
 #define STATIC_COMPILE_FLAGS " -shared "
@@ -67,7 +67,6 @@ char* compile_obj(char* file_name) {
     return buffer;
 }
 
-#define INCLUDE ""
 char* link_so(char* o_files) {
     char *buffer = malloc(3000);
     strcpy(buffer,COMPILER);
