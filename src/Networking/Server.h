@@ -3,6 +3,7 @@
 
 #ifdef _WIN32
 #include <winsock2.h>
+WSADATA wsaData;
 #elif __linux__
 #include <sys/socket.h>
 #include <netinet/in.h>

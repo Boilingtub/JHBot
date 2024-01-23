@@ -21,7 +21,7 @@
 #define LIB "-lcurl"
 #endif
 
-#define COMPILE_FLAGS "  "
+#define COMPILE_FLAGS " -Wall "
 #define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
 

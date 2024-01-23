@@ -39,7 +39,11 @@ struct HTTPRequest launch_listner_server(struct Server *server) {
     read(new_socket , buffer , buffer_size);
     int option = 1;
     setsockopt(server->socket,SOL_SOCKET,SO_REUSEADDR,(char *)&option,sizeof(option));
-    close(new_socket); 
+    #ifdef _WIN32
+    closesocket(new_socket);
+    #elif __linux__
+    close(new_socket);
+    #endif
     return parse_to_httpresponse(buffer);
 }
 

@@ -20,10 +20,23 @@ struct Server Server_constructor(int domain , int service , int protocol ,
 
     server.socket = socket(domain , service , protocol);
 
+    #ifdef _WIN32
+    int iResult;
+    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if(iResult != 0) {
+        printf("WSAStartup failed: %d\n", iResult);
+        exit(1);
+    }
+    if (server.socket == INVALID_SOCKET) {
+        perror("Failed to connect socket...\n");
+        exit(1);
+    }
+    #elif __linux__
     if (server.socket == 0) {
         perror("Failed to connect socket...\n");
         exit(1);
     }
+    #endif
 
     if (bind(server.socket , (struct sockaddr *)&server.address, 
         sizeof(server.address)) < 0 )  {
