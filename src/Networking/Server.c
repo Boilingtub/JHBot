@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef _WIN32
+WSADATA wsaData;
+#endif
 
 struct Server Server_constructor(int domain , int service , int protocol , 
                                  unsigned long face , int port , int backlog) {
