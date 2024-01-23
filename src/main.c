@@ -30,9 +30,9 @@ int main(int argc ,char* argv[]) {
     if(argc == 2) {
         if(strcmp(argv[1],"test") == 0) {
             char* Headers[] = {Header_Autorization,Header_ContentType};
-            char* data = read_text_file("samples/test_sample.txt");
+            char* data = read_text_file("../samples/json.txt");
             //printf("data == %s\n",data);
-            post_data(FaceBook_URL,Headers,2,data);
+            post_data("127.0.0.1",Headers,2,data);
             free(data);
         } 
         else if(strcmp(argv[1],"server")==0) {

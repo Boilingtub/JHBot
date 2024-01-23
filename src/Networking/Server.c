@@ -20,9 +20,7 @@ struct Server Server_constructor(int domain , int service , int protocol ,
     server.address.sin_family = domain;
     server.address.sin_port = htons(port);
     server.address.sin_addr.s_addr = htonl(face);
-
-    server.socket = socket(domain , service , protocol);
-
+    
     #ifdef _WIN32
     int iResult;
     iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -30,16 +28,19 @@ struct Server Server_constructor(int domain , int service , int protocol ,
         printf("WSAStartup failed: %d\n", iResult);
         exit(1);
     }
-    if (server.socket == INVALID_SOCKET) {
-        perror("Failed to connect socket...\n");
-        exit(1);
-    }
-    #elif __linux__
-    if (server.socket == 0) {
-        perror("Failed to connect socket...\n");
-        exit(1);
-    }
     #endif
+
+    server.socket = socket(domain , service , protocol);
+
+    #ifdef _WIN32
+    if (server.socket == INVALID_SOCKET) 
+    #elif __linux__
+    if (server.socket == 0)
+    #endif
+    {
+        perror("Failed to connect socket...\n");
+        exit(1);
+    }
 
     if (bind(server.socket , (struct sockaddr *)&server.address, 
         sizeof(server.address)) < 0 )  {

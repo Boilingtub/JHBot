@@ -36,11 +36,21 @@ struct HTTPRequest launch_listner_server(struct Server *server) {
     
     if(new_socket > 0)
         printf("\n===== CONNECTION SUCCESS =====\n");
+    #ifdef _WIN32 
+    recv(new_socket, buffer, buffer_size,0);
+    #elif __linux__
     read(new_socket , buffer , buffer_size);
+
+    #endif
+    if(strlen(buffer) < 2){
+        printf("No data transfered\n%s\n",buffer);
+        exit(1);
+    }
     int option = 1;
     setsockopt(server->socket,SOL_SOCKET,SO_REUSEADDR,(char *)&option,sizeof(option));
     #ifdef _WIN32
     closesocket(new_socket);
+    WSACleanup();
     #elif __linux__
     close(new_socket);
     #endif

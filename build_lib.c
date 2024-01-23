@@ -20,8 +20,8 @@
  
 
 #ifdef _WIN32
-#define INCLUDE "-IC:/msys64/usr/include"
-#define LIB "-LC:/msys64/usr/lib/ -lcurl -lws2_32"
+#define INCLUDE "-IC:/msys64/mingw64/include"
+#define LIB "-LC:/msys64/mingw64/lib/ -lcurl -lws2_32"
 #elif __linux__
 #define INCLUDE ""
 #define LIB "-lcurl"
