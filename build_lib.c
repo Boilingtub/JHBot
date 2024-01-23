@@ -11,6 +11,7 @@
 #include <string.h>
 // configure project setup here
 #define COMPILER "gcc"
+#define ARCHIVER = "ar"
 #define CURRENT_WORKING_DIR "../"
 #define SRC_DIR "src/"
 #define OUTPUT_DIR "objects/"
@@ -29,7 +30,8 @@
 #define COMPILE_FLAGS " -Wall -c -fPIC "
 #define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
-#define STATIC_COMPILE_FLAGS " -shared "
+#define STATIC_COMPILE_FLAGS " rcs "
+#define SHARED_COMPILE_FLAGS " -shared "
 
 #ifdef _WIN32
 #define EXTENSION ".dll"
@@ -56,8 +58,8 @@ void check_if_dir_exists() {
     } 
 }
 
-char* compile_obj(char* file_name) {
-    char* buffer = malloc(3000);
+void compile_obj(char* file_name) {
+    char buffer[3000];
     strcpy(buffer,COMPILER);
     strcat(buffer," ");
     strcat(buffer,INCLUDE);
@@ -68,14 +70,48 @@ char* compile_obj(char* file_name) {
     strcat(buffer,SRC_DIR);
     strcat(buffer,file_name);
     strcat(buffer," ");
-    return buffer;
+    system(buffer);
 }
 
-char* link_so(char* o_files) {
-    char *buffer = malloc(3000);
-    strcpy(buffer,COMPILER);
+void link_static(char* o_files) {
+    char buffer[3000];
+    strcpy(buffer,"ar");
     strcat(buffer," ");
     strcat(buffer,STATIC_COMPILE_FLAGS);
+    strcat(buffer," ");
+    strcat(buffer,PROGRAM_NAME);
+    strcat(buffer,".a");
+    strcat(buffer," ");
+    strcat(buffer,o_files);
+    strcat(buffer," ");
+    strcat(buffer,LIB);
+    strcat(buffer," ");
+    system(buffer);
+}
+
+void create_unified_obj() {
+    char buffer[3000];
+    strcpy(buffer,COMPILER);
+    strcat(buffer," ");
+    strcat(buffer,COMPILE_FLAGS);
+    strcat(buffer," ");
+    strcat(buffer,PROGRAM_NAME); 
+    strcat(buffer,".c");
+    strcat(buffer," ");
+    strcat(buffer,"-o");
+    strcat(buffer," ");
+    strcat(buffer,PROGRAM_NAME);
+    strcat(buffer,".o");
+    strcat(buffer," ");
+    system(buffer);
+
+}
+
+void link_shared(char* o_files) {
+    char buffer[3000];
+    strcpy(buffer,COMPILER);
+    strcat(buffer," ");
+    strcat(buffer,SHARED_COMPILE_FLAGS);
     strcat(buffer," ");
     strcat(buffer,o_files);
     strcat(buffer," ");
@@ -86,8 +122,10 @@ char* link_so(char* o_files) {
     strcat(buffer,PROGRAM_NAME);
     strcat(buffer,EXTENSION);
     strcat(buffer," ");
-    return buffer;
+    system(buffer);
 }
+
+
 
 char* get_file_from_path(char* input_str) {
     int start = 0; 
@@ -137,21 +175,48 @@ void cpy_lib_to_dependencies() {
     }
 }
 
+
+void add_header_to_unified_header(char* header_to_add) {
+    FILE* target = fopen(CAT2(PROGRAM_NAME,".c"),"a");
+    if(!target) {
+        printf("unable to open target file");
+        fclose(target);
+        return;
+    }
+
+    char path_to_header[strlen("#include \"") + strlen(CURRENT_WORKING_DIR) +
+                        strlen(SRC_DIR) + strlen(header_to_add)+3];
+    strncpy(path_to_header,"#include \"",strlen("#include \"")+1);
+    strncat(path_to_header,CURRENT_WORKING_DIR,strlen(CURRENT_WORKING_DIR)+1);
+    strncat(path_to_header,SRC_DIR,strlen(SRC_DIR)+1);
+    strncat(path_to_header,header_to_add,strlen(header_to_add)+1);
+    strncat(path_to_header,"\"\n",strlen("\"\n")+1);
+    
+    fprintf(target,"%s",path_to_header);
+    rewind(target);
+    fclose(target); 
+}
+
 int main() {
     check_if_dir_exists();
     remove(RUN_COMMAND(OUTPUT_DIR,PROGRAM_NAME,""));
+    remove(CAT3(OUTPUT_DIR,PROGRAM_NAME,".c"));
     chdir(OUTPUT_DIR);
     char c_files[strlen(C_FILES)+2];
     char o_files[strlen(C_FILES)+2];
     strncpy(c_files,C_FILES,strlen(C_FILES)+1);
     char* c_file = strtok(c_files," ");
     while(c_file) {
-        system( compile_obj(c_file) );
+        compile_obj(c_file);
+        //c_file[strlen(c_file)-1] = 'h';
+        //add_header_to_unified_header(c_file);
         c_file[strlen(c_file)-1] = 'o';
         strcat(o_files,get_file_from_path(c_file)); 
         c_file = strtok(NULL," ");
     }
-    system(link_so(o_files));
+    //link_static(o_files);
+    //create_unified_obj();
+    link_shared(o_files);
     chdir(CURRENT_WORKING_DIR);
     cpy_lib_to_dependencies();
 }
