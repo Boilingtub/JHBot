@@ -12,11 +12,13 @@
 #define OUTPUT_DIR "objects/"
 #define PROGRAM_NAME "libJHBot"
 #define C_FILES "Bot/bot.c Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c FLI/Python/python_fli.c DataGenerators/Whatsapp/WhatsappDataGen.c"
-#define INCLUDE "" 
+ 
 
 #ifdef _WIN32
-#define LIB " -L./curl-8.5.0_5-win64-mingw/lib/ -lcurl"
+#define INCLUDE "-IC:/msys64/usr/include"
+#define LIB "-LC:/msys64/usr/lib/ -lcurl"
 #elif __linux__
+#define INCLUDE ""
 #define LIB "-lcurl"
 #endif
 
@@ -52,6 +54,8 @@ void check_if_dir_exists() {
 char* compile_obj(char* file_name) {
     char* buffer = malloc(3000);
     strcat(buffer,COMPILER);
+    strcat(buffer," ");
+    strcat(buffer,INCLUDE);
     strcat(buffer," ");
     strcat(buffer,COMPILE_FLAGS);
     strcat(buffer," ");

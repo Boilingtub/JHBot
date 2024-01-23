@@ -15,8 +15,10 @@
 #define INCLUDE ""
 
 #ifdef _WIN32
-#define LIB " -L./curl-8.5.0_5-win64-mingw/lib/ -lcurl"
+#define INCLUDE "-IC:/msys64/usr/include"
+#define LIB "-LC:/msys64/usr/lib -lcurl"
 #elif __linux__
+#define INCULDE ""
 #define LIB "-lcurl"
 #endif
 
@@ -26,7 +28,7 @@
 
 //concatonation functions
 #define STR(x) #x
-#define COMPILE_COMMAND(compiler,current_working_dir,program_name) compiler " " LIB " " C_FILES " -o " current_working_dir OUTPUT_DIR program_name " " COMPILE_FLAGS " " INCLUDE
+#define COMPILE_COMMAND(compiler,current_working_dir,program_name) compiler " " COMPILE_FLAGS " " INCULDE " " C_FILES " " LIB " -o " current_working_dir OUTPUT_DIR program_name
 #define RUN_COMMAND(directory,program_name,run_flags) directory program_name run_flags
 
 void check_if_dir_exists() {
