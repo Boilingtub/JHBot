@@ -16,7 +16,7 @@
 
 #ifdef _WIN32
 #define INCLUDE "-IC:/msys64/usr/include"
-#define LIB "-LC:/msys64/usr/lib/ -lcurl"
+#define LIB "-LC:/msys64/usr/lib/ -lcurl -lws2_32"
 #elif __linux__
 #define INCLUDE ""
 #define LIB "-lcurl"
@@ -53,7 +53,7 @@ void check_if_dir_exists() {
 
 char* compile_obj(char* file_name) {
     char* buffer = malloc(3000);
-    strcat(buffer,COMPILER);
+    strcpy(buffer,COMPILER);
     strcat(buffer," ");
     strcat(buffer,INCLUDE);
     strcat(buffer," ");
@@ -68,7 +68,7 @@ char* compile_obj(char* file_name) {
 
 char* link_so(char* o_files) {
     char *buffer = malloc(3000);
-    strcat(buffer,COMPILER);
+    strcpy(buffer,COMPILER);
     strcat(buffer," ");
     strcat(buffer,STATIC_COMPILE_FLAGS);
     strcat(buffer," ");
@@ -104,9 +104,9 @@ int main() {
     check_if_dir_exists();
     remove(RUN_COMMAND(OUTPUT_DIR,PROGRAM_NAME,""));
     chdir(OUTPUT_DIR);
-    char *c_files = malloc(strlen(C_FILES));
-    char *o_files = malloc(strlen(C_FILES));
-    strncpy(c_files,C_FILES,strlen(C_FILES));
+    char *c_files = malloc(strlen(C_FILES)+2);
+    char *o_files = malloc(strlen(C_FILES)+2);
+    strncpy(c_files,C_FILES,strlen(C_FILES)+1);
     char* c_file = strtok(c_files," ");
     while(c_file) {
         system( compile_obj(c_file) );

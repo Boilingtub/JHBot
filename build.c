@@ -12,13 +12,12 @@
 #define OUTPUT_DIR "output/"
 #define PROGRAM_NAME "bot_test"
 #define C_FILES "main.c Bot/bot.c Bot/bot.h Networking/Server.c Networking/HttpRequest.c DataStructures/Common/Node.c DataStructures/Dictionary/Entry.c DataStructures/Dictionary/Dictionary.c DataStructures/Lists/Queue.c DataStructures/Lists/LinkedList.c DataStructures/Trees/BinarySearchTree.c Parsers/cjson/cJSON.c FLI/Python/python_fli.c DataGenerators/Whatsapp/WhatsappDataGen.c"
-#define INCLUDE ""
 
 #ifdef _WIN32
 #define INCLUDE "-IC:/msys64/usr/include"
-#define LIB "-LC:/msys64/usr/lib -lcurl"
+#define LIB "-LC:/msys64/usr/lib -lcurl -lws2_32"
 #elif __linux__
-#define INCULDE ""
+#define INCLUDE ""
 #define LIB "-lcurl"
 #endif
 
@@ -28,7 +27,7 @@
 
 //concatonation functions
 #define STR(x) #x
-#define COMPILE_COMMAND(compiler,current_working_dir,program_name) compiler " " COMPILE_FLAGS " " INCULDE " " C_FILES " " LIB " -o " current_working_dir OUTPUT_DIR program_name
+#define COMPILE_COMMAND(compiler,current_working_dir,program_name) compiler " " COMPILE_FLAGS " " INCLUDE " " C_FILES " " LIB " -o " current_working_dir OUTPUT_DIR program_name
 #define RUN_COMMAND(directory,program_name,run_flags) directory program_name run_flags
 
 void check_if_dir_exists() {
