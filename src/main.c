@@ -41,7 +41,9 @@ int main(int argc ,char* argv[]) {
             while(1) {
                 struct HTTPRequest response = launch_listner_server(&server); 
                 
-                printf("(Search_test) name = %s\n\n",(char*)Dictionary_search(&response.body,"contacts.profile.name",sizeof("contacts.profile.name")));
+                printf("(Search_test) name = %s\n\n",(char*)Dictionary_search(
+                    &response.body,"contacts.profile.name",
+                    sizeof("contacts.profile.name")));
                 char* body = Dictionary_print(&response.body);
                 printf("\n\n%s\n\n",body);
                 //free(body);
@@ -63,7 +65,10 @@ int main(int argc ,char* argv[]) {
             //Add_Body(message,"This is a valued message");
             char* First_Section_options[] = {"Sec1_opt1","Sec1_opt2"}; 
             char* Second_Section_options[] = {"Sec2_opt1","Sec2_opt2"};
-            cJSON* sections[] = {create_section("First_Section",First_Section_options,2),create_section("Second_Section",Second_Section_options,2)};
+            cJSON* sections[] = {create_section("First_Section",
+                                                First_Section_options,2),
+                create_section("Second_Section",Second_Section_options,2)};
+            
             cJSON* action = create_action_list("open options",sections,2);
             Make_interactive(message,"","blah blah","a",action);       
             char* Headers[] = {Header_Autorization,Header_ContentType}; 

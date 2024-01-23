@@ -50,7 +50,6 @@ struct HTTPRequest launch_listner_server(struct Server *server) {
     setsockopt(server->socket,SOL_SOCKET,SO_REUSEADDR,(char *)&option,sizeof(option));
     #ifdef _WIN32
     closesocket(new_socket);
-    WSACleanup();
     #elif __linux__
     close(new_socket);
     #endif

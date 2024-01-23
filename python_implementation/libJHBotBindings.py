@@ -9,10 +9,23 @@ if platform == "linux" or platform == "linux2":
     else:
         print("Cannot find libJHBot.so");
         exit()
-    
+
+
 if platform == "win32":
     if(exists("./libJHBot.dll")):
-        c_lib = CDLL('./libJHBot.dll')
+        
+        if(exists("./libcurl-4.dll")):
+            WinDLL("./libcurl-4.dll",winmode=0)
+        else:
+            print("Cannot find libcurl-4.dll\nsearching C:/msys64/mingw64/bin/libcurl-4.dll")
+            
+            if(exists("C:/msys64/mingw64/bin/libcurl-4.dll")):
+                WinDLL("C:/msys64/mingw64/bin/libcurl-4.dll",winmode=0)
+            else:
+                print("C:/msys64/mingw64/bin/libcurl-4.dll does not exists");
+                print("please download libcurl-4.dll");
+                exit();
+        c_lib = CDLL("./libJHBot.dll",winmode=0)
     else:
         print("Cannot find libJHBot.dll")
         exit()
