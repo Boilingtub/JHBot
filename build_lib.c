@@ -33,7 +33,8 @@
 #define EXTENSION ".so"
 #endif
 //concatonation functions
-#define STR(x) #x
+#define CAT3(x,y,z) x y z
+#define CAT2(x,y) x y
 
 #define RUN_COMMAND(directory,file_name,run_flags) directory file_name run_flags
 
@@ -66,6 +67,7 @@ char* compile_obj(char* file_name) {
     return buffer;
 }
 
+#define INCLUDE ""
 char* link_so(char* o_files) {
     char *buffer = malloc(3000);
     strcpy(buffer,COMPILER);
@@ -100,12 +102,43 @@ char* get_file_from_path(char* input_str) {
     return buffer;
 }
 
+void cpy_lib_to_dependencies() {
+    char source_file_path[] = CAT3(OUTPUT_DIR,PROGRAM_NAME,EXTENSION);
+    char source_file_name[] = CAT2(PROGRAM_NAME,EXTENSION);
+    #define target_folders_count 1
+    char* target_folders[target_folders_count] = {"python_implementation/"};
+    for(int i = 0;i < target_folders_count;i++) {
+        char target_file_path[strlen(target_folders[i])+strlen(source_file_name)+2];
+        strcpy(target_file_path, target_folders[i]);
+        strcat(target_file_path, source_file_name);
+        
+        FILE* source = fopen(source_file_path,"r");
+        if( source == NULL) {
+            printf("Could not open Source File\n");
+            exit(EXIT_FAILURE);
+        }
+
+        FILE* target = fopen(target_file_path, "w");
+        if(target == NULL) {
+            fclose(source);
+            printf("Could not open Target File\n");
+            exit(EXIT_FAILURE);
+        }
+
+        int ch;
+        while( (ch = fgetc(source)) != EOF)
+            fputc(ch, target);
+        fclose(source);
+        fclose(target);
+    }
+}
+
 int main() {
     check_if_dir_exists();
     remove(RUN_COMMAND(OUTPUT_DIR,PROGRAM_NAME,""));
     chdir(OUTPUT_DIR);
-    char *c_files = malloc(strlen(C_FILES)+2);
-    char *o_files = malloc(strlen(C_FILES)+2);
+    char c_files[strlen(C_FILES)+2];
+    char o_files[strlen(C_FILES)+2];
     strncpy(c_files,C_FILES,strlen(C_FILES)+1);
     char* c_file = strtok(c_files," ");
     while(c_file) {
@@ -115,4 +148,6 @@ int main() {
         c_file = strtok(NULL," ");
     }
     system(link_so(o_files));
+    chdir(CURRENT_WORKING_DIR);
+    cpy_lib_to_dependencies();
 }

@@ -1,14 +1,20 @@
 from ctypes import *
 from os.path import exists
+from sys import platform
 import socket
 
-if(exists("./libJHBot.so")):
-    c_lib = CDLL('./libJHBot.so')
-else: 
+if platform == "linux" or platform == "linux2":
+    if(exists("./libJHBot.so")):
+        c_lib = CDLL('./libJHBot.so')
+    else:
+        print("Cannot find libJHBot.so");
+        exit()
+    
+if platform == "win32":
     if(exists("./libJHBot.dll")):
         c_lib = CDLL('./libJHBot.dll')
     else:
-        print("Cannot find libJHBot.dll / libJHBot.so , make sure it is in the same directory as this python file")
+        print("Cannot find libJHBot.dll")
         exit()
 
 def char_p_array(*args):
