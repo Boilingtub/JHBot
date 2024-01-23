@@ -1,6 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _WIN32
+#include <io.h>
+#elif __linux__
 #include <unistd.h>
+#endif
 #include <dirent.h>
 #include <errno.h>
 #include <sys/stat.h>
@@ -91,13 +95,14 @@ char* get_file_from_path(char* input_str) {
         if(input_str[i] == '/')
             start = i+1;
 
-    char *buffer = malloc((strlen(input_str) - start)*sizeof(char));
-    int buffer_index = 0;
-    for(int i = start;i < strlen(input_str);i++) {
-        buffer[buffer_index] = input_str[i];
-        buffer_index++;
+    int buffer_size = sizeof(char[strlen(input_str) - start + 1]);
+    char *buffer = malloc(buffer_size);
+    for(int i = 0;i < buffer_size;i++) {
+        buffer[i] = input_str[start + i];
     }
-    buffer[strlen(buffer)] = ' ';
+
+    buffer[buffer_size-1] = ' ';
+    buffer[buffer_size] = '\0';
     return buffer;
 }
 
