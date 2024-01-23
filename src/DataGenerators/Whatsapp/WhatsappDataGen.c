@@ -152,7 +152,7 @@ cJSON* create_section(char* section_title, char* options[], int option_count) {
     cJSON * rows = cJSON_CreateArray();
     for(int i = 0;i < option_count; i++) {
         cJSON* row_item = cJSON_CreateObject(); 
-        char id[16];
+        char id[32];
         sprintf(id,"BUTTON_ID_%d",i);
         cJSON_AddItemToObject(row_item,"id",cJSON_CreateString(id));
         cJSON_AddItemToObject(row_item,"title",cJSON_CreateString(options[i]));
