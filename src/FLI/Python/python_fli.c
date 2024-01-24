@@ -5,6 +5,10 @@
 #include "../../DataStructures/Lists/LinkedList.h"
 #include "../../DataGenerators/Whatsapp/WhatsappDataGen.h"
 
+char * python_read_text_file(char* file_path);
+int python_post_data(char *URL, char*Headers[], unsigned long Header_count,
+                     char* Data); 
+
 void python_initialize_bot();
 int python_create_new_listner_server(int domain,int service,int protocol,
                                unsigned long face,int port,int backlog);
@@ -12,6 +16,7 @@ int python_launch_listner_server(int select);
 int python_parse_httprequest(char* data); 
 char* python_httprequest_search(int select, char* part ,char* field);
 
+char* python_whatsapp_message_to_string(int message_index); 
 int python_create_whatsapp_message(char* recipient_type, char* to); 
 void python_Make_Template(int message_index, char* name, char* language_code);
 void python_Make_Text(int message_index, char* body);
@@ -23,11 +28,20 @@ int python_create_section(char* section_title, char* options[], int option_count
 
 void python_clear_httprequests();
 void python_clear_server();
-void pythob_clear_Json();
+void python_clear_Json();
 
 struct LinkedList server_list;
 struct LinkedList HttpRequest_list;
 struct LinkedList JsonObj_list;
+
+char* python_read_text_file(char* file_path) {
+    return read_text_file(file_path);
+}
+
+int python_post_data(char *URL, char*Headers[], unsigned long Header_count,
+                     char* Data) {
+    return post_data(URL,Headers,Header_count,Data);
+}
 
 void python_initialize_bot() {
     server_list = LinkedList_constructor();
@@ -57,6 +71,7 @@ int python_parse_httprequest(char* data) {
     return HttpRequest_list.length-1; 
 }
 
+//NOT EXPORTED
 char* python_return_dict_or_key(struct Dictionary dictionary, char* field) {
     char* buf = Dictionary_search(&dictionary,field,sizeof(char[strlen(field)])); 
     if(buf == NULL) {

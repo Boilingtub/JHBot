@@ -27,7 +27,7 @@
 #define LIB "-lcurl"
 #endif
 
-#define COMPILE_FLAGS " -Wall -c -fPIC "
+#define COMPILE_FLAGS " -Wall -c -fPIC"
 #define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
 #define STATIC_COMPILE_FLAGS " rcs "
@@ -113,14 +113,14 @@ void link_shared(char* o_files) {
     strcat(buffer," ");
     strcat(buffer,SHARED_COMPILE_FLAGS);
     strcat(buffer," ");
-    strcat(buffer,o_files);
-    strcat(buffer," ");
-    strcat(buffer,LIB);
-    strcat(buffer," ");
     strcat(buffer,"-o");
     strcat(buffer," ");
     strcat(buffer,PROGRAM_NAME);
     strcat(buffer,EXTENSION);
+    strcat(buffer," ");
+    strcat(buffer,o_files);
+    strcat(buffer," ");
+    strcat(buffer,LIB);
     strcat(buffer," ");
     system(buffer);
 }
