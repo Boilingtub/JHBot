@@ -46,11 +46,11 @@ def int_p_array(*args):
         i = i + 1
     return Arr
 
-read_text_file = c_lib.read_text_file
+read_text_file = c_lib.python_read_text_file
 read_text_file.restype = c_char_p
 read_text_file.argtypes = [c_char_p]
 
-post_data = c_lib.post_data
+post_data = c_lib.python_post_data
 post_data.restype = c_int
 post_data.argtypes = [c_char_p,POINTER(c_char_p),c_ulong,c_char_p]
 

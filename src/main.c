@@ -1,3 +1,5 @@
+#include "DataStructures/Common/Node.h"
+#include "DataStructures/Lists/LinkedList.h"
 #ifdef _WIN32
 #include <winsock2.h>
 #elif __linux__
@@ -74,6 +76,52 @@ int main(int argc ,char* argv[]) {
             char* Headers[] = {Header_Autorization,Header_ContentType}; 
             printf("\n\n%s\n\n",cJSON_Print(message) );
             post_data(FaceBook_URL,Headers,2,cJSON_PrintUnformatted(message));
+        }
+        else if(strcmp(argv[1],"memtest")==0) {
+            
+
+            struct LinkedList ll = LinkedList_constructor(); 
+            LinkedList_insert(&ll,ll.length,"value1",7);
+            LinkedList_insert(&ll,ll.length,"value2",7);
+            LinkedList_insert(&ll,ll.length,"value3",7); 
+            LinkedList_insert(&ll,ll.length,"value4",7);
+            LinkedList_insert(&ll,ll.length,"value5",7);
+            LinkedList_insert(&ll,ll.length,"value6",7);
+            for(int i = 0; i < ll.length;i++) {
+                char* ll_value = (char*)LinkedList_retreive(&ll,i);
+                printf("%s\n",ll_value);
+            }
+            LinkedList_destructor(&ll);
+            /*struct Dictionary dict = Dictionary_constructor(NULL);
+            Dictionary_insert(&dict,"key1",5,"value1",7);
+            Dictionary_insert(&dict,"key2",5,"value2",7);
+            Dictionary_insert(&dict,"key3",5,"value3",7);
+            Dictionary_insert(&dict,"key4",5,"value4",7);
+            char* dict_print = Dictionary_print(&dict);
+            printf("\n%s\n",dict_print);
+            Dictionary_destructor(&dict);
+            free(dict_print);*/
+            
+        }
+        else if(strcmp(argv[1],"memtest-server") == 0) {
+            struct Server server = Server_constructor(AF_INET,SOCK_STREAM,
+                                                      0,INADDR_ANY,80,10);
+            while(1) {
+                struct HTTPRequest response = launch_listner_server(&server);  
+                char* dictvalues = Dictionary_print(&response.body);
+                printf("\n%s\n",dictvalues);
+                free(dictvalues);
+                HttpRequest_destructor(&response);
+            }
+        }
+        else if(strcmp(argv[1],"memtest-send") == 0) {
+            char* Headers[] = {Header_Autorization,Header_ContentType};
+            char* data = read_text_file("../samples/json.txt");
+            for(int i = 0;i < 1; i++) {
+                post_data("127.0.0.1",Headers,2,data);
+            }
+            free(data);
+
         }
     }
 }

@@ -39,6 +39,7 @@ void recursive_dictionary_destroy(struct Node *cursor) {
         recursive_dictionary_destroy(cursor->next);    
     }
     Entry_destructor((struct Entry *)cursor->data);
+    //free(cursor->data);
     free(cursor);
 
 }
@@ -63,8 +64,10 @@ void Dictionary_insert(struct Dictionary *dictionary,
                    void *key , unsigned long key_size,
                    void *value, unsigned long value_size) {
     
-    struct Entry entry = Entry_constructor(key, key_size+1, value,
-                                           value_size+1);
+    key_size += 1;
+    value_size += 1;
+    struct Entry entry = Entry_constructor(key, key_size, value,
+                                           value_size);
     //#include <stdio.h>
     //printf("key = %s : value = %s\n",(char*)key,(char*)value);
     

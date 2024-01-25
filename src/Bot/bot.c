@@ -18,9 +18,9 @@ void assign_string(char** dest,char* source);
 
 struct HTTPRequest launch_listner_server(struct Server *server) {
     #define buffer_size 300000
-    char *buffer = calloc(1,buffer_size);
-    
+    char buffer[buffer_size] = {0};
 
+    
     if (listen(server->socket , server->backlog) < 0) {
         perror("Failed to start listening...\n");
         exit(1);
@@ -46,6 +46,7 @@ struct HTTPRequest launch_listner_server(struct Server *server) {
         printf("No data transfered\n%s\n",buffer);
         exit(1);
     }
+
     int option = 1;
     setsockopt(server->socket,SOL_SOCKET,SO_REUSEADDR,(char *)&option,sizeof(option));
     #ifdef _WIN32
@@ -198,9 +199,12 @@ char* read_text_file(char* file_path) {
         exit(1);
     }
     fseek(file_pointer,0L,SEEK_END);
-    File_SIZE = ftell(file_pointer);
+    File_SIZE = ftell(file_pointer)+1;
     rewind(file_pointer);
+
     buffer = malloc(File_SIZE);
+    memset(buffer,0,File_SIZE);
+
     if(!buffer) {
         fclose(file_pointer);
         fputs("memory alloc failed",stderr);

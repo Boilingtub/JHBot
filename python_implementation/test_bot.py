@@ -12,8 +12,10 @@ initialize_bot()
 
 if(sys.argv[1] == "send"):
     print("SEND TEST")
-    data = read_text_file(b"../../samples/json.txt")
+    data = read_text_file(b"./../samples/json.txt")
     post_data(b"127.0.0.1",Headers,2,data)
+    
+    
 
 if(sys.argv[1] == "server"):
     print("SERVER TEST")
@@ -25,8 +27,9 @@ if(sys.argv[1] == "server"):
         print(httprequest_search(http_response,b"body",b"messages.body.text"))
         print(httprequest_search(http_response,b"blah",b"blah"))
         print(httprequest_search(http_response,b"body",b"unknwn"))
-        clear_servers()
         clear_httprequests()
+        clear_Json()
+    clear_servers();
 if(sys.argv[1] == "parse"):
     print("PARSE TEST")
     data = read_text_file(b"../../samples/sample.txt")
@@ -35,7 +38,7 @@ if(sys.argv[1] == "parse"):
     print(httprequest_search(http_response,b"body",b"messages.body.text"))
     print(httprequest_search(http_response,b"blah",b"blah"))
     print(httprequest_search(http_response,b"body",b"unknwn"))
-    clear_httprequests();
+    clear_httprequests()
 if(sys.argv[1] == "gen"):
     message = create_whatsapp_message(b"individual",b"27769827148")
     Section1_Options = char_p_array(b"Sec1_Opt1",b"Sec1_Opt2");
@@ -45,7 +48,8 @@ if(sys.argv[1] == "gen"):
     Sections = int_p_array(Section1,Section2)
     actions = create_action_list(b"quick reply",Sections,len(Sections))
     make_interactive_message(message,b"head ^o^",b"Select an OPTION",b"foot =)",actions)
-    post_data(FaceBook_URL,Headers,len(Headers),whatsapp_message_to_data(message))
+    post_data(b"127.0.0.1",Headers,len(Headers),whatsapp_message_to_data(message))
+    clear_Json()
 
          
     

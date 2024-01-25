@@ -9,7 +9,6 @@ struct Node Node_constructor(void *data, int size) {
         exit(1);
     }
     struct Node node;
-
     node.data = malloc(size); 
     memcpy(node.data, data, size);
     

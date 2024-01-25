@@ -29,7 +29,7 @@ struct LinkedList LinkedList_constructor() {
 }
 
 void LinkedList_destructor(struct LinkedList *linked_list) {
-    for(int i = 0; i < linked_list->length; i++) {
+    for(int i = 0; i < linked_list->length;) {
         LinkedList_remove(linked_list,0);
     }
 }
@@ -74,7 +74,7 @@ void LinkedList_insert(struct LinkedList *linked_list,
 }
 
 void LinkedList_remove(struct LinkedList *linked_list, int index) {
-   
+    //printf("removing -> %s\n",(char*)LinkedList_retreive(linked_list,index));
     if(index == 0) { 
         struct Node *node_to_remove = linked_list->head;
         if(node_to_remove) {
