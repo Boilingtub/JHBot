@@ -27,7 +27,7 @@ struct Dictionary Dictionary_constructor(int (*compare)(
 }
 
 void Dictionary_destructor(struct Dictionary *dictionary) {
-    LinkedList_destructor(&dictionary->keys);
+    LinkedList_destructor(&dictionary->keys,NULL);
     recursive_dictionary_destroy(dictionary->binary_search_tree.head);
 }
 

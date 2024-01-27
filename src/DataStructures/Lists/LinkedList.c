@@ -7,13 +7,16 @@ struct Node * LinkedList_create_node(void* data, int size);
 void LinkedList_destroy_node(struct Node *node_to_destroy);
 
 struct LinkedList LinkedList_constructor(void);
-void LinkedList_destructor(struct LinkedList *linked_list);
+void LinkedList_destructor(struct LinkedList *linked_list,
+                           void (*node_destruction_method)(struct Node* node));
 
 struct Node * LinkedList_iterate(struct  LinkedList *linked_list,
                       int index);
 void LinkedList_insert(struct LinkedList *linked_list, 
                  int index ,void* data , int size);
-void LinkedList_remove(struct LinkedList *linked_list, int index);
+void LinkedList_remove(struct LinkedList *linked_list, int index,
+                       void (*node_destruction_method)(struct Node *node_to_destroy));
+
 void* LinkedList_retreive(struct LinkedList *linked_list, int index);
 void LinkedList_bubble_sort(struct LinkedList *linked_list,
                     int (*compare)(void* a , void* b));
@@ -28,9 +31,10 @@ struct LinkedList LinkedList_constructor() {
     return new_list;
 }
 
-void LinkedList_destructor(struct LinkedList *linked_list) {
+void LinkedList_destructor(struct LinkedList *linked_list,
+                           void (*node_destruction_method)(struct Node* node)) {
     for(int i = 0; i < linked_list->length;) {
-        LinkedList_remove(linked_list,0);
+        LinkedList_remove(linked_list,0,node_destruction_method);
     }
 }
 
@@ -39,10 +43,6 @@ struct Node *LinkedList_create_node(void* data, int size) {
                              malloc(sizeof(struct Node));
     *new_node = Node_constructor(data, size);
     return new_node;
-}
-
-void LinkedList_destroy_node(struct Node *node_to_destroy) {
-    Node_destructor(node_to_destroy);
 }
 
 struct Node * LinkedList_iterate(struct LinkedList *linked_list,int index) {
@@ -60,7 +60,7 @@ struct Node * LinkedList_iterate(struct LinkedList *linked_list,int index) {
 
 void LinkedList_insert(struct LinkedList *linked_list,
                  int index, void* data, int size) {
-    size = size + 2;
+    size += 1;
     struct Node *node_to_insert = LinkedList_create_node(data, size);
     if(index == 0) {
         node_to_insert->next = linked_list->head;
@@ -73,20 +73,24 @@ void LinkedList_insert(struct LinkedList *linked_list,
     linked_list->length += 1;
 }
 
-void LinkedList_remove(struct LinkedList *linked_list, int index) {
+void LinkedList_remove(struct LinkedList *linked_list, int index,
+                       void (*node_destruction_method)(struct Node* node)) {
     //printf("removing -> %s\n",(char*)LinkedList_retreive(linked_list,index));
+    if(node_destruction_method == NULL) {
+        node_destruction_method = Node_destructor;
+    }
     if(index == 0) { 
         struct Node *node_to_remove = linked_list->head;
         if(node_to_remove) {
             linked_list->head = node_to_remove->next;
-            LinkedList_destroy_node(node_to_remove);
+            node_destruction_method(node_to_remove);
         }
     } 
     else {
         struct Node *cursor = LinkedList_iterate(linked_list, index -1);
         struct Node *node_to_remove = cursor->next;
         cursor->next = node_to_remove->next;
-        LinkedList_destroy_node(node_to_remove);
+        node_destruction_method(node_to_remove);
     }
     
     linked_list->length -= 1;

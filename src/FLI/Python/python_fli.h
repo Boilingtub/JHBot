@@ -38,7 +38,7 @@ ifwinExportdll int python_create_action_list(char* action_name,
 ifwinExportdll int python_create_section(char* section_title, char* options[], int option_count);
 
 ifwinExportdll void python_clear_httprequests();
-ifwinExportdll void python_clear_server();
+ifwinExportdll void python_clear_servers();
 ifwinExportdll void python_clear_Json();
 
 

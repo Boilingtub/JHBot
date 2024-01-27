@@ -67,6 +67,7 @@ void HttpRequest_destructor(struct HTTPRequest *request) {
     Dictionary_destructor(&request->request_line);
     Dictionary_destructor(&request->header_fields);
     Dictionary_destructor(&request->body);
+    free(request);
 }
 
 void extract_request_line_fields(struct HTTPRequest *request,
@@ -141,9 +142,9 @@ void extract_header_fields(struct HTTPRequest *request,
                                           value, 
                                           sizeof(char[strlen(value)]));
         }
-        Queue_pop(&headers);
+        Queue_pop(&headers,NULL);
     }
-    Queue_destructor(&headers);
+    Queue_destructor(&headers,NULL);
 }
 
 int compare_content_type_string(const char* test_str, const char* type_str) {
@@ -207,10 +208,10 @@ void extract_body_content_type_x_www_form_urlencoded(struct Dictionary
         Dictionary_insert(body_fields, key,
                             sizeof(char[strlen(key)]), value, 
                             sizeof(char[strlen(value)]));
-        Queue_pop(&fields);
+        Queue_pop(&fields,NULL);
         field = Queue_peek(&fields);
     }
-    Queue_destructor(&fields);
+    Queue_destructor(&fields,NULL);
 }
 
 
@@ -220,14 +221,13 @@ void recursively_parse_JSON(struct Dictionary *fields,cJSON *json,char* parent_n
         if(!cJSON_IsString(component) && !cJSON_IsNumber(component)) {
             if(parent_name) {
                 if(component->string) {
-                    char* new_parent_name = malloc(sizeof(char[strlen(parent_name)])
+                    char new_parent_name[sizeof(char[strlen(parent_name)])
                                                    +sizeof(char[strlen
-                                                   (component->string)])+2);
+                                                   (component->string)])+2];
                     strcpy(new_parent_name,parent_name);
                     strcat(new_parent_name,".");
                     strcat(new_parent_name,component->string);
                     recursively_parse_JSON(fields,component,new_parent_name);
-                    free(new_parent_name);
                 }
                 else
                     recursively_parse_JSON(fields,component,parent_name);

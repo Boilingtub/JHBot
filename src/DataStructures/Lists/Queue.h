@@ -8,9 +8,11 @@ struct Queue {
 };
 
 struct Queue Queue_constructor(void);
-void Queue_destructor(struct Queue *queue);
+void Queue_destructor(struct Queue *queue,
+                      void (*node_destruction_method)(struct Node* node));
 
 void Queue_push(struct Queue *queue, void *data,int size); 
 void* Queue_peek(struct Queue *queue); 
-void Queue_pop(struct Queue *queue);
+void Queue_pop(struct Queue *queue,
+               void (*node_destruction_method)(struct Node* node));
 #endif

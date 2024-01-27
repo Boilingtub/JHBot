@@ -1,5 +1,6 @@
 #include "DataStructures/Common/Node.h"
 #include "DataStructures/Lists/LinkedList.h"
+#include "FLI/Python/python_fli.h"
 #ifdef _WIN32
 #include <winsock2.h>
 #elif __linux__
@@ -48,12 +49,12 @@ int main(int argc ,char* argv[]) {
                     sizeof("contacts.profile.name")));
                 char* body = Dictionary_print(&response.body);
                 printf("\n\n%s\n\n",body);
-                //free(body);
+                free(body);
                 HttpRequest_destructor(&response);
             }
         }
         else if(strcmp(argv[1],"parse")==0) {
-            char* data = read_text_file("samples/sample.txt");
+            char* data = read_text_file("../samples/sample.txt");
             //printf("data == %s\n",data);
             struct HTTPRequest request = parse_to_httpresponse(data);
             char *response = Dictionary_print(&request.body);
@@ -74,12 +75,17 @@ int main(int argc ,char* argv[]) {
             cJSON* action = create_action_list("open options",sections,2);
             Make_interactive(message,"","blah blah","a",action);       
             char* Headers[] = {Header_Autorization,Header_ContentType}; 
-            printf("\n\n%s\n\n",cJSON_Print(message) );
-            post_data(FaceBook_URL,Headers,2,cJSON_PrintUnformatted(message));
+            //printf("\n\n%s\n\n",cJSON_Print(message) );
+            char* data = cJSON_PrintUnformatted(message);
+            post_data("127.0.0.1",Headers,2,data);
+            free(data);
+            //cJSON_free(action);
+            //cJSON_free(sections[0]);
+            //cJSON_free(sections[1]);
+            cJSON_Delete(message);
+
         }
         else if(strcmp(argv[1],"memtest")==0) {
-            
-
             struct LinkedList ll = LinkedList_constructor(); 
             LinkedList_insert(&ll,ll.length,"value1",7);
             LinkedList_insert(&ll,ll.length,"value2",7);
@@ -91,17 +97,70 @@ int main(int argc ,char* argv[]) {
                 char* ll_value = (char*)LinkedList_retreive(&ll,i);
                 printf("%s\n",ll_value);
             }
-            LinkedList_destructor(&ll);
-            /*struct Dictionary dict = Dictionary_constructor(NULL);
+            LinkedList_destructor(&ll,NULL);
+            struct Dictionary dict = Dictionary_constructor(NULL);
             Dictionary_insert(&dict,"key1",5,"value1",7);
             Dictionary_insert(&dict,"key2",5,"value2",7);
             Dictionary_insert(&dict,"key3",5,"value3",7);
-            Dictionary_insert(&dict,"key4",5,"value4",7);
+            Dictionary_insert(&dict,"key4",7,"value4",9);
+            Dictionary_insert(&dict,"key5",7,"value5",9);
+            Dictionary_insert(&dict,"key6",7,"value6",9);
+            Dictionary_insert(&dict,"key7",7,"value7",9);
+            Dictionary_insert(&dict,"key8",7,"value8",9);
+            Dictionary_insert(&dict,"key9",7,"value9",9);
+            Dictionary_insert(&dict,"key10",7,"value10",9);
             char* dict_print = Dictionary_print(&dict);
             printf("\n%s\n",dict_print);
             Dictionary_destructor(&dict);
-            free(dict_print);*/
+            free(dict_print);
+
             
+        }
+        else if (strcmp(argv[1],"FLI-test")==0) {
+            int listner_server = python_create_new_listner_server(
+                AF_INET,SOCK_STREAM,0,INADDR_ANY,80,10);
+            python_clear_servers();
+  
+        }
+        else if(strcmp(argv[1],"FLI-server") == 0) {
+            python_initialize_bot();
+            int listner_server = python_create_new_listner_server(
+                AF_INET,SOCK_STREAM,0,INADDR_ANY,80,10);
+            int i = 0;
+            while(i < 10) {
+                //int http_response = python_launch_listner_server(listner_server);
+                char* request_data = python_read_text_file("../samples/sample.txt");
+                int request = python_parse_httprequest(request_data);
+ 
+                char *response = python_httprequest_search(request,"body","");
+                //printf("\n\n\n%s\n\n\n",response);
+                free(response);
+
+                free(request_data);
+                python_clear_httprequests();
+                i++;
+                
+            }
+            python_clear_servers();
+            
+        }
+        else if(strcmp(argv[1],"FLI-send") == 0) {
+            char* Headers[] = {Header_Autorization,Header_ContentType};
+            int message = python_create_whatsapp_message("individual","27769827148");
+            char* Section1_Options[] = {"",""};
+            char* Section2_Options[] = {"",""};
+            int Section1 = python_create_section("Section1",Section1_Options,2);
+            int Section2 = python_create_section("Section2",Section2_Options,2);
+            int Sections[] = {Section1,Section2};
+            int actions = python_create_action_list("quick reply",Sections,2);
+            python_Make_interactive(message,"head","body","foot",actions);
+            //printf("MADE INTERACTIVE\n");
+            char* data = python_whatsapp_message_to_string(message);
+            //printf("\ndata = %s\n",data);
+            post_data("127.0.0.1",Headers,2,data);
+            free(data);
+            python_clear_Json();
+        
         }
         else if(strcmp(argv[1],"memtest-server") == 0) {
             struct Server server = Server_constructor(AF_INET,SOCK_STREAM,
@@ -112,6 +171,7 @@ int main(int argc ,char* argv[]) {
                 printf("\n%s\n",dictvalues);
                 free(dictvalues);
                 HttpRequest_destructor(&response);
+                break;
             }
         }
         else if(strcmp(argv[1],"memtest-send") == 0) {

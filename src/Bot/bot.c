@@ -211,12 +211,13 @@ char* read_text_file(char* file_path) {
         exit(1);
     }
 
-    if(1!=fread(buffer, File_SIZE, 1 , file_pointer)) {
+    if(1!=fread(buffer, File_SIZE-1, 1 , file_pointer)) {
         fclose(file_pointer);
         free(buffer);
         fputs("entire read failed",stderr);
         exit(1);
-    }
+    };
+    fclose(file_pointer);
     return buffer;
 }
 
