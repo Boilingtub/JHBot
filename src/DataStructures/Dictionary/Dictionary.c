@@ -48,11 +48,10 @@ void* Dictionary_search(struct Dictionary *dictionary, void *key,
                    unsigned long key_size) {
     //========= HARD CODING FUNCTION POINTER =========
     dictionary->binary_search_tree.compare = dict_compare_search_string_keys;
-    
     void* result = BinarySearchTree_search(&dictionary->binary_search_tree,
                                            key);
     
-    if(result) {
+    if(result) { 
         return ((struct Entry*)result)->value;
     }
     else {

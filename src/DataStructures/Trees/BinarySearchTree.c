@@ -17,9 +17,6 @@ void BinarySearchTree_destroy_node(struct Node *node_to_destroy);
 struct Node * BinarySearchTree_iterate(struct BinarySearchTree *tree,
                           struct Node *cursor,
                           void *data, int *direction);
-void* BinarySearchTree_search(struct BinarySearchTree *tree, void *data);
-void BinarySearchTree_insert(struct BinarySearchTree *tree, void *data, int size); 
-
 void recursive_tree_destruction(struct Node *node);
 
 struct BinarySearchTree BinarySearchTree_constructor(int (*compare)

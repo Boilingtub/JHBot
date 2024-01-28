@@ -40,7 +40,7 @@ struct HTTPRequest launch_listner_server(struct Server *server) {
     recv(new_socket, buffer, buffer_size,0);
     #elif __linux__
     read(new_socket , buffer , buffer_size);
-
+    write_text_file("accepted_message.txt",buffer);
     #endif
     if(strlen(buffer) < 2){
         printf("No data transfered\n%s\n",buffer);

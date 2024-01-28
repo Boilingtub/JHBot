@@ -54,10 +54,6 @@ post_data = c_lib.python_post_data
 post_data.restype = c_int
 post_data.argtypes = [c_char_p,POINTER(c_char_p),c_ulong,c_char_p]
 
-initialize_bot = c_lib.python_initialize_bot;
-initialize_bot.restype = None
-initialize_bot.argtypes = None
-
 create_new_listner_server = c_lib.python_create_new_listner_server
 create_new_listner_server.restype = c_int
 create_new_listner_server.argtypes = [c_int,c_int,c_int,c_ulong,c_int,c_int]
@@ -114,6 +110,6 @@ clear_servers = c_lib.python_clear_servers
 clear_servers.restype = None
 clear_servers.argtypes = None
 
-clear_Json = c_lib.python_clear_Json
-clear_Json.restype = None
-clear_Json.argtypes = None
+clear_messages = c_lib.python_clear_messages
+clear_messages.restype = None
+clear_messages.argtypes = None

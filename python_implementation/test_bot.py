@@ -8,18 +8,13 @@ Header_ContentType = b"Content-Type: application/json"
 
 Headers = char_p_array(Header_Autorization,Header_ContentType)
 
-initialize_bot()
-
 if(sys.argv[1] == "send"):
     print("SEND TEST")
     data = read_text_file(b"./../samples/json.txt")
     post_data(b"127.0.0.1",Headers,2,data)
     
-    
-
 if(sys.argv[1] == "server"):
     print("SERVER TEST")
-    initialize_bot();
     listner_server = create_new_listner_server(socket.AF_INET,socket.SOCK_STREAM,0,socket.INADDR_ANY,80,10)
     while(True):
         http_response =  launch_listner_server(listner_server)
@@ -28,7 +23,6 @@ if(sys.argv[1] == "server"):
         print(httprequest_search(http_response,b"blah",b"blah"))
         print(httprequest_search(http_response,b"body",b"unknwn"))
         clear_httprequests()
-        clear_Json()
     clear_servers();
 if(sys.argv[1] == "parse"):
     print("PARSE TEST")
@@ -49,7 +43,7 @@ if(sys.argv[1] == "gen"):
     actions = create_action_list(b"quick reply",Sections,len(Sections))
     make_interactive_message(message,b"head ^o^",b"Select an OPTION",b"foot =)",actions)
     post_data(b"127.0.0.1",Headers,len(Headers),whatsapp_message_to_data(message))
-    clear_Json()
+    clear_messages()
 
          
     

@@ -1,10 +1,12 @@
 #include "HttpRequest.h"
 #include "../DataStructures/Lists/Queue.h"
 #include "../Parsers/cjson/cJSON.h"
+#include <stdatomic.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef enum bool{false,true} bool;
 void extract_request_line_fields(struct HTTPRequest *request,
                                  char *request_line);
 void extract_header_fields(struct HTTPRequest *request,
@@ -18,7 +20,6 @@ void extract_body(struct HTTPRequest *request, char* body);
 
 struct HTTPRequest HttpRequest_constructor(char *request_input_string) {
     struct HTTPRequest request;
-    //printf("\n+++++++++++++\nInput Length = %lu\n++++++++++++++\n",strlen(request_input_string));
     unsigned long request_string_length = strlen(request_input_string)+1;
     char request_string[request_string_length];
     memset(request_string,0,request_string_length);
@@ -127,7 +128,8 @@ void extract_header_fields(struct HTTPRequest *request,
         field = strtok(NULL, "\n");
     }
     
-    request->header_fields = Dictionary_constructor(dict_compare_entry_string_keys);
+    request->header_fields = Dictionary_constructor(
+                                dict_compare_entry_string_keys);
     while(headers.list.length > 0) {
         
         char *header = (char*)Queue_peek(&headers);
@@ -152,7 +154,6 @@ int compare_content_type_string(const char* test_str, const char* type_str) {
         int type_str_size = strlen(type_str);
         char comp_str[type_str_size];
         strncpy(comp_str,test_str ,type_str_size);
-        //printf("type_str = %s\nwith length = %lu\ncomp_str = %s\nwith length = %lu\n",type_str,strlen(type_str),comp_str,strlen(type_str));
         int result = strcmp(comp_str,type_str);
         return result;
     }
@@ -215,7 +216,8 @@ void extract_body_content_type_x_www_form_urlencoded(struct Dictionary
 }
 
 
-void recursively_parse_JSON(struct Dictionary *fields,cJSON *json,char* parent_name) {
+void recursively_parse_JSON(struct Dictionary *fields,cJSON *json,
+                            char* parent_name) {
     cJSON *component;
     cJSON_ArrayForEach(component,json) {
         if(!cJSON_IsString(component) && !cJSON_IsNumber(component)) {
@@ -236,14 +238,48 @@ void recursively_parse_JSON(struct Dictionary *fields,cJSON *json,char* parent_n
                 recursively_parse_JSON(fields,component,component->string);
         }
         else {
-            if(parent_name)
-            {
+            if(parent_name) {
                 char new_key_name[sizeof(char[strlen(parent_name)])
                                             +sizeof(char[strlen
-                                            (component->string)])+2];
-                strcpy(new_key_name,parent_name);
-                strcat(new_key_name,".");
-                strcat(new_key_name,component->string);
+                                            (component->string)])+2+10];
+                {//independent scope  //Make sure Key is Unique (use when 
+                    //processing arrays of same objects)
+                    bool isUnique = false;
+                    unsigned int same_name_count = 0;
+                    while(isUnique == false) {
+                        char test_parent_name[sizeof(char[strlen(
+                                              parent_name)])+10];
+                        strcpy(test_parent_name,parent_name);
+
+                        if(same_name_count != 0) {
+                            char same_name_count_string[10];
+                            snprintf(same_name_count_string,sizeof(
+                                                same_name_count_string),
+                                                "%d",same_name_count);
+                            strcat(test_parent_name,same_name_count_string);
+                        }
+                        char test_key_name[sizeof(char[strlen(test_parent_name)])
+                                                +sizeof(char[strlen
+                                                (component->string)])+2];
+
+                        strcpy(test_key_name,test_parent_name);
+                        strcat(test_key_name,".");
+                        strcat(test_key_name,component->string);
+    
+                        char* found_in_dict = Dictionary_search(
+                                                fields,test_key_name,
+                                                sizeof(test_key_name));
+                        if(found_in_dict == NULL) {
+                            isUnique = true;
+                            strcpy(new_key_name,test_key_name);
+                        }
+                        else {
+                            isUnique = false;
+                            same_name_count++;
+                        }
+                    }
+                }//independent scope
+               
                 Dictionary_insert(fields,
                             new_key_name, 
                             sizeof(char[strlen(new_key_name)]),

@@ -39,7 +39,7 @@ ifwinExportdll int python_create_section(char* section_title, char* options[], i
 
 ifwinExportdll void python_clear_httprequests();
 ifwinExportdll void python_clear_servers();
-ifwinExportdll void python_clear_Json();
+ifwinExportdll void python_clear_messages();
 
 
 #endif

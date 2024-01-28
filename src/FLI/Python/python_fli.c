@@ -3,7 +3,6 @@
 #include <string.h>
 #include "../../Bot/bot.h"
 #include "../../Networking//HttpRequest.h"
-#include "../../DataStructures/Lists/LinkedList.h"
 #include "../../DataGenerators/Whatsapp/WhatsappDataGen.h"
 
 #ifdef _WIN32
@@ -37,11 +36,48 @@ int python_create_section(char* section_title, char* options[], int option_count
 
 void python_clear_httprequests();
 void python_clear_servers();
-void python_clear_Json();
+void python_clear_messages();
 */
-struct LinkedList server_list;
-struct LinkedList HttpRequest_list;
+struct ServerList {
+    struct Server* servers;
+    int length;
+};
+void ServerList_append(struct ServerList *list, struct Server item_to_append) {
+    if(list->length == 0) {
+        list->servers = (struct Server*) malloc(list->length*sizeof(struct Server));
+    }
+    list->length += 1;
+    list->servers = (struct Server*) realloc(list->servers, list->length*sizeof(struct Server));
+    list->servers[list->length-1] = item_to_append;
+}
+struct ServerList ServerList_constructor() {
+    struct ServerList new_server_list;
+    new_server_list.length = 0;
+    return new_server_list;
+}
 
+struct ServerList server_list;
+//====
+struct HttpRequestList {
+    struct HTTPRequest* requests;
+    int length;
+};
+void HttpRequestList_append(struct HttpRequestList *list, struct HTTPRequest item_to_append) {
+    if(list->length == 0) {
+        list->requests = (struct HTTPRequest*) malloc(list->length*sizeof(struct HTTPRequest));
+    }
+    list->length += 1;
+    list->requests = (struct HTTPRequest*) realloc(list->requests, list->length*sizeof(struct HTTPRequest));
+    list->requests[list->length-1] = item_to_append;
+}
+struct HttpRequestList HTTPRequestList_constructor() {
+    struct HttpRequestList new_httprequest_list;
+    new_httprequest_list.length = 0;
+    return new_httprequest_list;
+}
+
+struct HttpRequestList HttpRequest_list;
+//====
 struct cJsonObjList {
     cJSON** objs;
     int length;
@@ -50,10 +86,12 @@ struct cJsonObjList {
 struct cJsonObjList cJsonObjList_constructor() {
     struct cJsonObjList new_message_list;
     new_message_list.length = 0;
-    new_message_list.objs = (cJSON**) malloc(new_message_list.length*sizeof(cJSON*));
     return new_message_list;
 }
 void cJsonObjList_append(struct cJsonObjList *list, cJSON* item_to_append) {
+    if(list->length == 0) {
+        list->objs = (cJSON**) malloc(list->length*sizeof(cJSON*));
+    }
     list->length += 1;
     list->objs = (cJSON**) realloc(list->objs, list->length*sizeof(cJSON*));
     list->objs[list->length-1] = item_to_append;
@@ -62,11 +100,13 @@ void cJsonObjList_append(struct cJsonObjList *list, cJSON* item_to_append) {
 struct cJsonObjList message_list;
 
 
-
 int* JsonObjects_to_free; 
-int JsonObjects_to_free_length;
+int JsonObjects_to_free_length = 0;
 
 void addJsonObj_to_freeList(int index_to_add) {
+    if(JsonObjects_to_free_length == 0) {
+         JsonObjects_to_free = malloc(0);
+    }
     JsonObjects_to_free_length += 1;
     JsonObjects_to_free = realloc(JsonObjects_to_free,
                                  JsonObjects_to_free_length*sizeof(int));
@@ -88,32 +128,21 @@ ifwinExportdll int python_post_data(char *URL, char*Headers[], unsigned long Hea
     return post_data(URL,Headers,Header_count,Data);
 }
 
-ifwinExportdll void python_initialize_bot() {
-    server_list = LinkedList_constructor();
-    HttpRequest_list = LinkedList_constructor();
-    message_list = cJsonObjList_constructor();
-    JsonObjects_to_free = malloc(0);
-}
-
 ifwinExportdll int python_create_new_listner_server(int domain,int service,int protocol,
-                               unsigned long face,int port,int backlog) {
-     
-    struct Server new_server = Server_constructor(domain,service,protocol,
-                                       face,port,backlog);
-    LinkedList_insert(&server_list,server_list.length,&new_server,sizeof(new_server));
+                               unsigned long face,int port,int backlog) { 
+    ServerList_append(&server_list,Server_constructor(domain,service,protocol,
+                                         face,port,backlog));
     return server_list.length-1;
 }
 
 ifwinExportdll int python_launch_listner_server(int select) {
-    struct Server selected_server = *(struct Server*)(LinkedList_retreive(&server_list,select));
-    struct HTTPRequest response = launch_listner_server(&selected_server);
-    LinkedList_insert(&HttpRequest_list,HttpRequest_list.length,&response,sizeof(response));
+    struct Server selected_server = server_list.servers[select]; 
+    HttpRequestList_append(&HttpRequest_list,launch_listner_server(&selected_server));
     return HttpRequest_list.length-1; 
 }
 
 ifwinExportdll int python_parse_httprequest(char* data) {
-    struct HTTPRequest response = parse_to_httpresponse(data);
-    LinkedList_insert(&HttpRequest_list,HttpRequest_list.length,&response,sizeof(response));
+    HttpRequestList_append(&HttpRequest_list,parse_to_httpresponse(data));
     return HttpRequest_list.length-1; 
 }
 
@@ -131,7 +160,7 @@ char* python_return_dict_or_key(struct Dictionary dictionary, char* field) {
 }
 
 ifwinExportdll char* python_httprequest_search(int select, char* part ,char* field) {
-    struct HTTPRequest request = *(struct HTTPRequest*)LinkedList_retreive(&HttpRequest_list,select);
+    struct HTTPRequest request = HttpRequest_list.requests[select];
     if(strcmp(part,"request_line") == 0) {
         return python_return_dict_or_key(request.request_line, field);
     }
@@ -204,28 +233,21 @@ ifwinExportdll int python_create_section(char* section_title, char* options[], i
 }
 
 //=====
-
-void LinkedList_HttpRequest_destructor(struct Node *node) {
-    HttpRequest_destructor((struct HTTPRequest*)node->data);
-    free(node);
-}
-
-void LinkedList_cJSON_destructor(struct Node *node) {
-    cJSON_Delete((cJSON*)node->data);
-    free(node);
-}
-
-ifwinExportdll void python_clear_httprequests() {    
-    LinkedList_destructor(&HttpRequest_list,LinkedList_HttpRequest_destructor); 
-    HttpRequest_list = LinkedList_constructor();
+ifwinExportdll void python_clear_httprequests() {   
+    for(int i = 0;i < HttpRequest_list.length;i++) {
+        HttpRequest_destructor(&HttpRequest_list.requests[i]);
+    }
+    HttpRequest_list.length = 0;
 }
 
 ifwinExportdll void python_clear_servers() {
-    LinkedList_destructor(&server_list,NULL);
-    server_list = LinkedList_constructor();
+    for(int i = 0;i < server_list.length;i++) {
+        free(&server_list.servers[i]);
+    }
+    server_list.length = 0;
 }
 
-ifwinExportdll void python_clear_Json() {
+ifwinExportdll void python_clear_messages() {
     for(int i = 0;i < JsonObjects_to_free_length;i++) {
        if(!(UNUSED_INDEX == JsonObjects_to_free[i]))
             cJSON_Delete(message_list.objs[JsonObjects_to_free[i]]);
@@ -233,8 +255,7 @@ ifwinExportdll void python_clear_Json() {
     free(message_list.objs);
     free(JsonObjects_to_free);
     JsonObjects_to_free_length = 0;
-    JsonObjects_to_free = malloc(0);
-    message_list = cJsonObjList_constructor();   
+    message_list.length = 0;
 }
 
 
