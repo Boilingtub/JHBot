@@ -1,4 +1,5 @@
 
+
 # libJHBot
 Online Bot with the ability to: \
 receive Http requests from an online source. \
@@ -19,17 +20,16 @@ _**note : Please copy libJHBot.dll manually from objects/ to python_implementati
 
 # Python implementation
 ## Functions available
-#### **string read_text_file( string file_path )**
-- arguments : 
-  - string (pointer to byte array) 
-- returns :
-    - string (pointer to byte array)
-**description :** simply reads a text file and return the contents of the file into a string \
-
-**example:**
-```
-    file_content = read_text_file(b"path/to/text/file")
-```
+- ### **string read_text_file( string file_path )**
+  - arguments : 
+    - string (pointer to byte array) 
+  - returns :
+      - string (pointer to byte array)
+   - description : simply reads a text file and return the contents of the file into a string
+    - example:
+      - ```
+        file_content = read_text_file(b"path/to/text/file")
+        ```
 ## Examples
 ### Basic Structure
 
