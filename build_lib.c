@@ -31,7 +31,7 @@
 #define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
 #define STATIC_COMPILE_FLAGS " rcs "
-#define SHARED_COMPILE_FLAGS " -shared "
+#define SHARED_COMPILE_FLAGS " -shared -O3 -Ofast "
 
 #ifdef _WIN32
 #define EXTENSION ".dll"

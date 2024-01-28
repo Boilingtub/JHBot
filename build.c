@@ -21,8 +21,8 @@
 #define LIB "-lcurl"
 #endif
 
+#define COMPILE_FLAGS " -Wall -O3 -Ofast "
 //#define COMPILE_FLAGS " -Wall -g -ggdb3 "
-#define COMPILE_FLAGS " -Wall -g -ggdb3 "
 #define RUN_PROGRAM_ON_COMPILE 0
 #define RUN_FLAGS " test "
 
