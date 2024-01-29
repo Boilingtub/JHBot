@@ -1,3 +1,4 @@
+
 # libJHBot
 Online Bot with the ability to: \
 receive Http requests from an online source. \
@@ -8,7 +9,9 @@ through Curl send a message to any other online destination
 ##  Dependencies
 - gcc (version 12.2 recommended) **Compile-time**
 - libcurl-devel **Compile-time**
-- libcurl **Run-time** (included with windows release)
+- libcurl **Run-time** 
+  - included with windows release
+  - on linux install using package manager
 
 ### Linux
 run compile.sh script from root directory of project
