@@ -21,7 +21,7 @@ _**note : Please copy libJHBot.dll manually from objects/ to python_implementati
 
 # Python implementation
 ## Dependencies
-Python V 3.12
+Python Version 3.0 +  , recommended (3.12+)
 ## Functions available
 - #### read_text_file( string file_path ) -> string
   - arguments : 
