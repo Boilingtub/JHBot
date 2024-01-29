@@ -3,7 +3,7 @@
 Online Bot with the ability to: \
 receive Http requests from an online source. \
 Proccess the http , can parse Json into a dictionary for dicision making. \
-through Curl send a message to any other online destination \
+through Curl send a message to any other online destination
 
 # Compile from source
 ##  Dependencies
@@ -15,7 +15,7 @@ through Curl send a message to any other online destination \
 run compile.sh script from root directory of project
 ### Windows
 run compile.bat script from root directory of project \
-_**note : Please copy libJHBot.dll manually from objects/ to python_implementation/**_  \
+_**note : Please copy libJHBot.dll manually from objects/ to python_implementation/**_  
 
 # Python implementation
 ## Dependencies
@@ -137,6 +137,7 @@ Python V 3.12
       message = create_whatsapp_message(b"individual",b"27058475493")
       make_template_message(message, b"hello_world", b"en_US")
       ```
+
 - #### make_text_message(int message_index, string body) -> Nothing
   - arguments : 
     - integer (adresses message to be made into a text message)
@@ -153,6 +154,7 @@ Python V 3.12
       
       clear_messages()
       ```
+
 - #### make_reply_message(integer message_index, string message_id) -> Nothing
   - arguments : 
     - integer (used to adress message to be made into a reply)
@@ -179,13 +181,17 @@ Python V 3.12
     - creates a section that can be used to construct an action
   - example:
     - ```
-             message = create_whatsapp_message(b"individual",b"27058475493")
+      message = create_whatsapp_message(b"individual",b"27058475493")
+
       Quote_options = char_p_array(b"request a quote", b"call quotes       manager")
       information_options = char_p_array(b"request information", b"call human")
-      Quote_section = create_section(b"quotes", Quote_options, len(Quote_options));
-      information_section = create_section(b"information", information_options, len(information_options));
+
+      Quote_section = create_section(b"quotes", Quote_options, len(Quote_options))
+      information_section = create_section(b"information", information_options, len(information_options))
+
       Sections = int_p_array(Quote_section,information_section)
-      actions = create_action_list(b"request", Sections, len(Sections))
+      actions = create_action(b"request", Sections, len(Sections))
+
       make_interactive_message(message,b"Get information",b"please select any one of the following options", b"thank you for contacting us", actions) 
       ```
 
@@ -200,13 +206,17 @@ Python V 3.12
     - create an action with multiple sections to be used in the creation of an interactive message
   - example:
     - ```
-                   message = create_whatsapp_message(b"individual",b"27058475493")
+      message = create_whatsapp_message(b"individual",b"27058475493")
+
       Quote_options = char_p_array(b"request a quote", b"call quotes       manager")
       information_options = char_p_array(b"request information", b"call human")
-      Quote_section = create_section(b"quotes", Quote_options, len(Quote_options));
-      information_section = create_section(b"information", information_options, len(information_options));
+
+      Quote_section = create_section(b"quotes", Quote_options, len(Quote_options))
+      information_section = create_section(b"information", information_options, len(information_options))
+
       Sections = int_p_array(Quote_section,information_section)
-      actions = create_action_list(b"request", Sections, len(Sections))
+      actions = create_action(b"request", Sections, len(Sections))
+
       make_interactive_message(message,b"Get information",b"please select any one of the following options", b"thank you for contacting us", actions)
       ```
 
@@ -224,12 +234,15 @@ Python V 3.12
   - example:
     - ```
       message = create_whatsapp_message(b"individual",b"27058475493")
+
       Quote_options = char_p_array(b"request a quote", b"call quotes manager")
       information_options = char_p_array(b"request information", b"call human")
-      Quote_section = create_section(b"quotes", Quote_options, len(Quote_options));
-      information_section = create_section(b"information", information_options, len(information_options));
+
+      Quote_section = create_section(b"quotes", Quote_options, len(Quote_options))
+      information_section = create_section(b"information", information_options, len(information_options))
+
       Sections = int_p_array(Quote_section,information_section)
-      actions = create_action_list(b"request", Sections, len(Sections))
+      actions = create_action(b"request", Sections, len(Sections))
       make_interactive_message(message,b"Get information",b"please select any one of the following options", b"thank you for contacting us", actions)     
       
       #do something else
@@ -308,17 +321,74 @@ while(True):
   
     #get data to send
     data = read_text_file(b"path/to/text/file")
-   
+    # OR generate whatsapp message data
+    message = create_whatsapp_message(b"recipient type",b"to");
+
     #send data to some link
     post_data(b"url.to.destination",Headers,2,data)
                   
     clear_httprequests() #clear processed httprequests 
  clear_servers() # clear servers that can be used;
 ```
-### Generate Whatsapp message
-```
-    message = create_whatsapp_message("")
-```
-```
+### Generate Whatsapp message data
 
-```
+- #### Template message
+  - ```
+    template_message = create_whatsapp_message(b"individual",b"27838401275")
+
+    make_template_message(template_message,b"template name", b"en_US")
+
+    template_message_data = whatsapp_message_to_string(template_message)
+    
+    post_data(b"url.to.pos.to", Headers, len(Headers), template_message_data)
+
+    clear_messges()
+    ```
+  
+- #### text message
+  - ```
+    text_message = create_whatsapp_message(b"individual", b"27838401275")
+    
+    make_text_message(text_message, b"body of text message")
+    
+    text_message_data = whatsapp_message_to_string(text_message)
+    
+    post_data(b"url.to.pos.to", Headers, len(Headers), text_message_data)
+
+    clear_messages()
+    ```
+
+- #### reply message
+  - ```
+    reply_message = create_whatsapp_message(b"individual", b"27838401275")
+    
+    make_text_message(reply_message, b"body of reply message") #can use any other type
+    
+    make_reply_message(reply_message,b"ABGGFlA5FpafAgo6tHcNmNjXmuSf")
+    
+    reply_message_data = whatsapp_message_to_string(reply_message)
+    
+    post_data(b"url.to.pos.to", Headers, len(Headers), reply_message_data)
+  
+    clear_messages()
+    ```
+
+- #### interactive message
+  - ```
+    interactive_message = create_whatsapp_message(b"individual",b"27058475493")
+
+    Quote_options = char_p_array(b"request a quote", b"call quotes manager")
+    information_options = char_p_array(b"request information", b"call human")
+
+    Quote_section = create_section(b"quotes", Quote_options, len(Quote_options))
+    information_section = create_section(b"information", information_options, len  (information_options))
+
+    Sections = int_p_array(Quote_section,information_section)
+    actions = create_action(b"request", Sections, len(Sections))
+    make_interactive_message(interactive_message,b"Get information",b"please select any one of the following options", b"thank you for contacting us", actions)     
+  
+    interactive_message_data = whatsapp_message_to_string(interactive_message)
+    post_data(b"url.to.pos.to", Headers, len(Headers), interactive_message_data)
+
+    clear_messages()  
+  ```
