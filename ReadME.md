@@ -10,7 +10,7 @@ through Curl send a message to any other online destination
 - gcc (version 12.2 recommended) **Compile-time**
 - libcurl-devel **Compile-time**
 - libcurl **Run-time** 
-  - included with windows release
+  - included with windows release (libcurl-4.dll)
   - on linux install using package manager
 
 ### Linux
