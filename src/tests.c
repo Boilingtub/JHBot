@@ -41,7 +41,7 @@ int main(int argc ,char* argv[]) {
             struct Server server = Server_constructor(AF_INET,SOCK_STREAM,
                                                       0,INADDR_ANY,80,10);
             while(1) {
-                struct HTTPRequest response = launch_listner_server(&server); 
+                struct HTTPRequest response = launch_listner_server(&server,"server_test"); 
                 
                 printf("(Search_test) name = %s\n\n",(char*)Dictionary_search(
                     &response.body,"contacts.profile.name",
@@ -118,7 +118,7 @@ int main(int argc ,char* argv[]) {
         else if (strcmp(argv[1],"FLI-test")==0) {
             int listner_server = python_create_new_listner_server(
                 AF_INET,SOCK_STREAM,0,INADDR_ANY,80,10);
-            python_launch_listner_server(listner_server);
+            python_launch_listner_server(listner_server,"FLI-test");
             python_clear_servers();
   
         }
@@ -128,7 +128,7 @@ int main(int argc ,char* argv[]) {
                 AF_INET,SOCK_STREAM,0,INADDR_ANY,80,10);
             int i = 0;
             while(i < 1) {
-                int http_response = python_launch_listner_server(listner_server); 
+                int http_response = python_launch_listner_server(listner_server,"FLI-server"); 
                 //char* request_data = python_read_text_file("../samples/sample.txt");
                 //char* request_data = python_read_text_file("accepted_message.txt");
                 //int request = python_parse_httprequest(request_data);
@@ -167,7 +167,7 @@ int main(int argc ,char* argv[]) {
             struct Server server = Server_constructor(AF_INET,SOCK_STREAM,
                                                       0,INADDR_ANY,80,10);
             while(1) {
-                struct HTTPRequest response = launch_listner_server(&server);  
+                struct HTTPRequest response = launch_listner_server(&server,"memtest-server");  
                 char* dictvalues = Dictionary_print(&response.body);
                 printf("\n%s\n",dictvalues);
                 free(dictvalues);

@@ -15,7 +15,8 @@ ifwinExportdll int python_post_data(char *URL, char*Headers[], unsigned long Hea
 ifwinExportdll int python_create_new_listner_server(int domain,int service,int protocol,
                                unsigned long face,int port,int backlog);
 
-ifwinExportdll int python_launch_listner_server(int select);
+ifwinExportdll int python_launch_listner_server(int select,
+                                                char* server_response_message);
 
 ifwinExportdll int python_parse_httprequest(char* data); 
 
@@ -23,7 +24,8 @@ ifwinExportdll char* python_httprequest_search(int select, char* part ,char* fie
 
 ifwinExportdll char* python_whatsapp_message_to_string(int message_index); 
 ifwinExportdll int python_create_whatsapp_message(char* recipient_type, char* to); 
-ifwinExportdll void python_Make_Template(int message_index, char* name, char* language_code);
+ifwinExportdll void python_Make_Template(int message_index, char* name,
+                                         char* language_code);
 ifwinExportdll void python_Make_Text(int message_index, char* body);
 ifwinExportdll void python_Make_reply(int message_index, char* message_id);
 ifwinExportdll void python_Make_interactive(int message_index, char* header, char* body,

@@ -16,12 +16,14 @@
 struct HTTPRequest parse_to_httpresponse(char* msg);
 void assign_string(char** dest,char* source);
 
-struct HTTPRequest launch_listner_server(struct Server *server) {
+struct HTTPRequest launch_listner_server(struct Server *server,
+                                         char* server_response_message) {
     #define buffer_size 300000
     char buffer[buffer_size] = {0};
 
-    char server_response[] = "HTTP/1.1 200 OK\nConnection: Closed\n\nconnection success";
-
+    char server_response[strlen(server_response_message)+40]; 
+    strcpy(server_response,"HTTP/1.1 200 OK\nConnection: Closed\n\n");
+    strcat(server_response,server_response_message);
     
     if (listen(server->socket , server->backlog) < 0) {
         perror("Failed to start listening...\n");

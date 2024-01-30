@@ -12,32 +12,7 @@
 #endif
 
 #define UNUSED_INDEX -2000000000
-/*
-char * python_read_text_file(char* file_path);
-ifwinExportdll void python_write_text_file(char* file_path, char* buffer); 
-int python_post_data(char *URL, char*Headers[], unsigned long Header_count,
-                     char* Data); 
 
-int python_create_new_listner_server(int domain,int service,int protocol,
-                               unsigned long face,int port,int backlog);
-int python_launch_listner_server(int select);
-int python_parse_httprequest(char* data); 
-char* python_httprequest_search(int select, char* part ,char* field);
-
-char* python_whatsapp_message_to_string(int message_index); 
-int python_create_whatsapp_message(char* recipient_type, char* to); 
-void python_Make_Template(int message_index, char* name, char* language_code);
-void python_Make_Text(int message_index, char* body);
-void python_Make_reply(int message_index, char* message_id);
-void python_Make_interactive(int message_index, char* header, char* body,
-                             char* footer, int action_index);
-int python_create_action_list(char* action_name, int sections_index[],int section_count);
-int python_create_section(char* section_title, char* options[], int option_count);
-
-void python_clear_httprequests();
-void python_clear_servers();
-void python_clear_messages();
-*/
 struct ServerList {
     struct Server* servers;
     int length;
@@ -139,9 +114,11 @@ ifwinExportdll int python_create_new_listner_server(int domain,int service,int p
     return server_list.length-1;
 }
 
-ifwinExportdll int python_launch_listner_server(int select) {
+ifwinExportdll int python_launch_listner_server(int select, char* server_response_message) {
     struct Server selected_server = server_list.servers[select]; 
-    HttpRequestList_append(&HttpRequest_list,launch_listner_server(&selected_server));
+    HttpRequestList_append(&HttpRequest_list,
+                           launch_listner_server(&selected_server,
+                                                 server_response_message));
     return HttpRequest_list.length-1; 
 }
 
