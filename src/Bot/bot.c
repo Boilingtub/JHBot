@@ -42,7 +42,7 @@ struct HTTPRequest launch_listner_server(struct Server *server,
         printf("\n===== CONNECTION SUCCESS =====\n");
     #ifdef _WIN32 
     recv(new_socket, buffer, buffer_size,0);
-    send(new_socket, server_response, (int)strlen(server_response), 0)
+    send(new_socket, server_response, (int)strlen(server_response), 0);
     #elif __linux__
     read(new_socket , buffer , buffer_size);
     write(new_socket, server_response, strlen(server_response));
