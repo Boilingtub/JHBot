@@ -115,6 +115,25 @@ int main(int argc ,char* argv[]) {
 
             
         }
+        else if(strcmp(argv[1],"invalid") == 0) {
+            char* data = read_text_file("./../samples/invalid_sample");
+            printf("data : \n%s\n",data);
+            struct HTTPRequest request = parse_to_httpresponse(data);
+            
+            char* request_line = Dictionary_print(&request.request_line);
+            char* header_fields = Dictionary_print(&request.header_fields);
+            char* body = Dictionary_print(&request.body);
+
+            printf("request_line : \n%s\n",request_line);
+            printf("header_fields : \n%s\n",header_fields);
+            printf("body : \n%s\n",body);
+            
+            free(request_line);
+            free(header_fields);
+            free(body);
+            free(data);
+            HttpRequest_destructor(&request);
+        }
         else if (strcmp(argv[1],"FLI-test")==0) {
             int listner_server = python_create_new_listner_server(
                 AF_INET,SOCK_STREAM,0,INADDR_ANY,80,10);

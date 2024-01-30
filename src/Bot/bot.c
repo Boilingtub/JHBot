@@ -98,7 +98,7 @@ struct HTTPRequest parse_to_httpresponse(char* msg) {
     }
     remove_all_chars(msg,0xD);
     struct HTTPRequest sent_request = HttpRequest_constructor(msg);
-
+    printf("2\n");
     /*for(int i = 0; i < sent_request.request_line.keys.length; i++) {
                 char* key_name = (char*)LinkedList_retreive(
                                             &sent_request.request_line.keys,i);

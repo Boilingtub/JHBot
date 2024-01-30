@@ -24,7 +24,7 @@ struct HTTPRequest HttpRequest_constructor(char *request_input_string) {
     char request_string[request_string_length];
     memset(request_string,0,request_string_length);
 
-    strncpy(request_string, request_input_string,request_string_length);
+    strcpy(request_string, request_input_string);
 
     for(int i = 0; i <= strlen(request_string) -1; i++) {
         if (request_string[i] == '\n' && request_string[i+1] == '\n'){
@@ -78,7 +78,7 @@ void extract_request_line_fields(struct HTTPRequest *request,
     char fields[fields_string_length];
     memset(fields,0,fields_string_length);
 
-    strncpy(fields, request_line,fields_string_length);
+    strcpy(fields, request_line);
 
     char *method = strtok(fields, " ");
 
@@ -119,7 +119,7 @@ void extract_header_fields(struct HTTPRequest *request,
     char fields[header_fields_string_length];
     memset(fields,0,header_fields_string_length);
     
-    strncpy(fields, header_fields,header_fields_string_length);
+    strcpy(fields, header_fields);
     struct Queue headers = Queue_constructor();
     char *field = strtok(fields, "\n");
 
