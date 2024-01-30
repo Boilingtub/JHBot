@@ -77,16 +77,17 @@ Python Version 3.0 +  , recommended (3.12+)
       - ```
         listner_server = create_new_listner_server(socket.AF_INET, socket.SOCK_STREAM, 0, socket.INADDR_ANY, 80, 10)
         ```
-- #### launch_listner_server(int select) -> Integer
+- #### launch_listner_server(int select, string response) -> Integer
   - arguments : 
     - integer (adresses server to be launched)
+    - string (response when third party server connects to server , used to validate connection)
   - returns :
     - Integer (used to adress the received http request)
   - description : 
     - launches a server to listen to a specific port
   - example:
     - ```
-      http_response = launch_listner_server(listner_server)
+      http_response = launch_listner_server(listner_server,b"connection success")
       ```
 - #### parse_httprequest(string data) -> Integer
   - arguments : 
