@@ -133,7 +133,7 @@ int main(int argc ,char* argv[]) {
                 //char* request_data = python_read_text_file("accepted_message.txt");
                 //int request = python_parse_httprequest(request_data);
  
-                char *response = python_httprequest_search(http_response,"body","");
+                char *response = python_httprequest_search(http_response,"dfsc","");
                 printf("\n\n\n%s\n\n\n",response);
                 free(response);
 

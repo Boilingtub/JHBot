@@ -20,6 +20,8 @@ struct HTTPRequest launch_listner_server(struct Server *server) {
     #define buffer_size 300000
     char buffer[buffer_size] = {0};
 
+    char server_response[] = "HTTP/1.1 200 OK\nConnection: Closed\n\nconnection success";
+
     
     if (listen(server->socket , server->backlog) < 0) {
         perror("Failed to start listening...\n");
@@ -38,15 +40,18 @@ struct HTTPRequest launch_listner_server(struct Server *server) {
         printf("\n===== CONNECTION SUCCESS =====\n");
     #ifdef _WIN32 
     recv(new_socket, buffer, buffer_size,0);
+    send(new_socket, server_response, (int)strlen(server_response), 0)
     #elif __linux__
     read(new_socket , buffer , buffer_size);
-    write_text_file("accepted_message.txt",buffer);
+    write(new_socket, server_response, strlen(server_response));
     #endif
     if(strlen(buffer) < 2){
         printf("No data transfered\n%s\n",buffer);
         exit(1);
     }
 
+    printf("\n==== CONNECTION DATA START ====\n%s\n===== CONNECTION DATA END=====\n",
+           buffer);
     int option = 1;
     setsockopt(server->socket,SOL_SOCKET,SO_REUSEADDR,(char *)&option,sizeof(option));
     #ifdef _WIN32

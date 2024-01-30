@@ -15,10 +15,10 @@ if(sys.argv[1] == "send"):
     
 if(sys.argv[1] == "server"):
     print("SERVER TEST")
-    listner_server = create_new_listner_server(socket.AF_INET,socket.SOCK_STREAM,0,socket.INADDR_ANY,80,10)
+    listner_server = create_new_listner_server(socket.AF_INET,socket.SOCK_STREAM,0,socket.INADDR_ANY,50,10)
     while(True):
         http_response =  launch_listner_server(listner_server)
-        print(httprequest_search(http_response,b"body",b"messages.from"))
+        form = print(httprequest_search(http_response,b"body",b"messages.from"))
         print(httprequest_search(http_response,b"body",b"messages.body.text"))
         print(httprequest_search(http_response,b"blah",b"blah"))
         print(httprequest_search(http_response,b"body",b"unknwn"))
@@ -49,25 +49,22 @@ if(sys.argv[1] == "gen"):
     
 
 '''
-initialize_bot()
+from libJHBotBindings import *
+
+Headers = char_p_array(b"header1", b"header2");
 listner_server = create_new_listner_server(socket.AF_INET,socket.SOCK_STREAM,0,socket.INADDR_ANY,80,10)
 while(True):
     response = launch_listner_server(listner_server)
     
     #decision making based on response behaviour
     str = httprequest_search(response,"part","field")
-    #######
+     
+    data = create_whatsapp_text_message(b"individual",b"27832732630",b"HELLO")
 
-    
-    #data = read_text_file(b"../../samples/json.txt")
-    data = create_whatsapp_text_message(b"individual",b"27832732630",b"HELLO");
-
-    #print(create_whatsapp_reply_message(b"group",b"a",b"a",b"We will get on this shortly").decode('utf-8'))
-
-    
-    #######
     post_data(b"127.0.0.1",Headers,2,data)
+
     clear_httprequests()
+    clear_messages()
 clear_servers()
 
 '''

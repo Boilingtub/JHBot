@@ -7,15 +7,10 @@
     #define ifwinExportdll 
 #endif
 
-
-
-
 ifwinExportdll char * python_read_text_file(char* file_path);
-
+ifwinExportdll void python_write_text_file(char* file_path, char* buffer); 
 ifwinExportdll int python_post_data(char *URL, char*Headers[], unsigned long Header_count,
                      char* Data); 
-
-ifwinExportdll void python_initialize_bot();
 
 ifwinExportdll int python_create_new_listner_server(int domain,int service,int protocol,
                                unsigned long face,int port,int backlog);

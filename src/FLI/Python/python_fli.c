@@ -14,10 +14,10 @@
 #define UNUSED_INDEX -2000000000
 /*
 char * python_read_text_file(char* file_path);
+ifwinExportdll void python_write_text_file(char* file_path, char* buffer); 
 int python_post_data(char *URL, char*Headers[], unsigned long Header_count,
                      char* Data); 
 
-void python_initialize_bot();
 int python_create_new_listner_server(int domain,int service,int protocol,
                                unsigned long face,int port,int backlog);
 int python_launch_listner_server(int select);
@@ -121,6 +121,10 @@ void removeJsonObj_form_freeList(int index_to_remove) {
 
 ifwinExportdll char* python_read_text_file(char* file_path) {
     return read_text_file(file_path);
+}
+
+ifwinExportdll void python_write_text_file(char* file_path, char* buffer) {
+    write_text_file(file_path, buffer);
 }
 
 ifwinExportdll int python_post_data(char *URL, char*Headers[], unsigned long Header_count,
