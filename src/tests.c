@@ -23,7 +23,7 @@ char Header_ContentType[] = "Content-Type: application/json";
 char data_default_template[] = "{ \"messaging_product\": \"whatsapp\", \"to\": \"27769827148\", \"type\": \"template\", \"template\": { \"name\": \"bcs_first\", \"language\": { \"code\": \"en_US\" } } }";
 char data_sample_text[] = "{ \"messaging_product\": \"whatsapp\",\"recipient_type\": \"individual\",\"to\": \"27769827148\",\"type\": \"text\",\"text\": { \"preview_url\": false,\"body\": \"Hello Jan-Hendrik\"}}";
 
-char certificate_path[] = "/home/hendrik/ca-certificates/cert.pem";
+char certificate_path[] = "/home/hendrik/ca-certificates/bossoft.bcscc.co.za.pem";
 
 int main(int argc ,char* argv[]) {
     for(int i = 0; i < argc; i++) 

@@ -1,5 +1,6 @@
 #include "Server.h"
 #include <openssl/ssl.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -31,7 +32,7 @@ SSL_CTX *create_ssl_context()
 
     method = TLS_server_method();
 
-    ctx = SSL_CTX_new(method);
+    ctx = SSL_CTX_new_ex(NULL,NULL,method);
     if (!ctx) {
         perror("Unable to create SSL context");
         ERR_print_errors_fp(stderr);
@@ -41,18 +42,19 @@ SSL_CTX *create_ssl_context()
     return ctx;
 }
 
-void configure_context(SSL_CTX *ctx, char* server_cert)
+void configure_context(SSL_CTX *ctx, char* cert_pem)
 {
     /* Set the key and cert */
-    if (SSL_CTX_use_certificate_file(ctx, server_cert, SSL_FILETYPE_PEM) <= 0) {
+    if (SSL_CTX_use_certificate_file(ctx, cert_pem, SSL_FILETYPE_PEM) <= 0) {
         ERR_print_errors_fp(stderr);
         exit(EXIT_FAILURE);
     }
-
-    if (SSL_CTX_use_PrivateKey_file(ctx, server_cert, SSL_FILETYPE_PEM) <= 0 ) {
+    printf("SSL certificate set\n");
+    if (SSL_CTX_use_PrivateKey_file(ctx, cert_pem, SSL_FILETYPE_PEM) <= 0 ) {
         ERR_print_errors_fp(stderr);
         exit(EXIT_FAILURE);
     }
+    printf("SSL private key set\n");
 }
 
 struct SSL_Server SSL_Server_constructor(int domain, int service, int protocol,
@@ -72,6 +74,7 @@ struct SSL_Server SSL_Server_constructor(int domain, int service, int protocol,
     ssl_server.address.sin_addr.s_addr = htonl(face);
 
     InitializeOpenSSL();
+    
     ssl_server.socket = socket(domain, service, protocol);
     if(ssl_server.socket < 0) {
         perror("Failed to connect ssl_socket...");
@@ -85,18 +88,12 @@ struct SSL_Server SSL_Server_constructor(int domain, int service, int protocol,
         exit(1);
     }
 
-
     ssl_server.ctx = create_ssl_context(); 
+    
     configure_context(ssl_server.ctx, server_cert);
 
     SSL_CTX_set_options(ssl_server.ctx, SSL_OP_SINGLE_DH_USE);
 
-    ssl_server.use_certificate = SSL_CTX_use_certificate_file(ssl_server.ctx,
-                                                         server_cert,
-                                                         SSL_FILETYPE_PEM);
-    ssl_server.use_privatekey = SSL_CTX_use_PrivateKey_file(ssl_server.ctx,
-                                                            server_cert,
-                                                            SSL_FILETYPE_PEM);
     ssl_server.ssl = SSL_new(ssl_server.ctx);
 
     return ssl_server;
