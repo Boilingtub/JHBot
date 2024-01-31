@@ -73,10 +73,25 @@ struct SSL_Server SSL_Server_constructor(int domain, int service, int protocol,
     ssl_server.address.sin_port = htons(port);
     ssl_server.address.sin_addr.s_addr = htonl(face);
 
+     #ifdef _WIN32
+    int iResult;
+    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if(iResult != 0) {
+        printf("WSAStartup failed: %d\n", iResult);
+        exit(1);
+    }
+    #endif
+
     InitializeOpenSSL();
     
     ssl_server.socket = socket(domain, service, protocol);
-    if(ssl_server.socket < 0) {
+   
+    #ifdef _WIN32
+    if (server.socket == INVALID_SOCKET) 
+    #elif __linux__
+    if (ssl_server.socket == 0)
+    #endif
+    {
         perror("Failed to connect ssl_socket...");
         exit(1);
     }
