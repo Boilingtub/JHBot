@@ -15,8 +15,17 @@ ifwinExportdll int python_post_data(char *URL, char*Headers[], unsigned long Hea
 ifwinExportdll int python_create_new_listner_server(int domain,int service,int protocol,
                                unsigned long face,int port,int backlog);
 
+ifwinExportdll int python_create_new_ssl_listner_server(int domain,int service,int protocol,
+                               unsigned long face,int port,int backlog,
+                               char* cert_pem, char* key_pem); 
+
 ifwinExportdll int python_launch_listner_server(int select,
                                                 char* server_response_message);
+
+ifwinExportdll int python_launch_ssl_listner_server(int select,
+                                                    char* server_response_message);
+
+
 
 ifwinExportdll int python_parse_httprequest(char* data); 
 

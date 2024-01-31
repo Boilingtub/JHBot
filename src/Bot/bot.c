@@ -42,6 +42,11 @@ struct HTTPRequest launch_ssl_listner_server(struct SSL_Server *server,
 
     new_socket = accept(server->socket, (struct sockaddr*)&server->address,
                         (socklen_t*)&address_length);
+    if(new_socket < 0) {
+        perror("unable to accept...\n");
+        exit(1);
+    }
+
     SSL_set_fd(server->ssl, new_socket);
     int ssl_err = SSL_accept(server->ssl);
 
@@ -50,10 +55,9 @@ struct HTTPRequest launch_ssl_listner_server(struct SSL_Server *server,
         SSL_shutdown(server->ssl);
         exit(1);
     }
-
-    if(new_socket <= 0) {
+    else {
         printf("\n===== CONNECTION SUCCESS =====\n");
-        
+       
         SSL_read(server->ssl, buffer, buffer_size);
         SSL_write(server->ssl, server_response, strlen(server_response));
         
@@ -73,10 +77,6 @@ struct HTTPRequest launch_ssl_listner_server(struct SSL_Server *server,
         #endif
         SSL_shutdown(server->ssl);
         return parse_to_httpresponse(buffer);
-    }
-    else {
-        printf("could not read data form socket...");
-        exit(1);
     }
 }
 
@@ -101,8 +101,11 @@ struct HTTPRequest launch_listner_server(struct Server *server,
     
     new_socket = accept(server->socket, (struct sockaddr*)&server->address,
                         (socklen_t*)&address_length); //while loop in accept();
-    
-    if(new_socket > 0) {
+    if(new_socket < 0) {
+        perror("unable to accept...\n");
+        exit(1);
+    }    
+    else {
         printf("\n===== CONNECTION SUCCESS =====\n");
         #ifdef _WIN32 
         recv(new_socket, buffer, buffer_size,0);
@@ -126,10 +129,6 @@ struct HTTPRequest launch_listner_server(struct Server *server,
         close(new_socket);
         #endif
         return parse_to_httpresponse(buffer);
-    }
-    else {
-        printf("could not read data form socket...");
-        exit(1);
     }
 }
 
@@ -231,7 +230,8 @@ int post_data(char* URL , char* Headers[],
         curl_easy_setopt(curl, CURLOPT_URL, URL);
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, Data);
-        curl_easy_setopt(curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_SSLv3); 
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
+        curl_easy_setopt(curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_3); 
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         
 

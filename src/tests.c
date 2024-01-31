@@ -23,7 +23,8 @@ char Header_ContentType[] = "Content-Type: application/json";
 char data_default_template[] = "{ \"messaging_product\": \"whatsapp\", \"to\": \"27769827148\", \"type\": \"template\", \"template\": { \"name\": \"bcs_first\", \"language\": { \"code\": \"en_US\" } } }";
 char data_sample_text[] = "{ \"messaging_product\": \"whatsapp\",\"recipient_type\": \"individual\",\"to\": \"27769827148\",\"type\": \"text\",\"text\": { \"preview_url\": false,\"body\": \"Hello Jan-Hendrik\"}}";
 
-char certificate_path[] = "/home/hendrik/ca-certificates/bossoft.bcscc.co.za.pem";
+char certificate_path[] = "/home/hendrik/ca-certificates/cert.pem";
+char key_path[] = "/home/hendrik/ca-certificates/key.pem";
 
 int main(int argc ,char* argv[]) {
     for(int i = 0; i < argc; i++) 
@@ -42,7 +43,7 @@ int main(int argc ,char* argv[]) {
         else if(strcmp(argv[1],"server")==0) {
             printf("cert path : %s\n",certificate_path);
             struct SSL_Server server = SSL_Server_constructor(AF_INET,SOCK_STREAM,
-                                                      0,INADDR_ANY,80,10,certificate_path);
+                                                      0,INADDR_ANY,80,10,certificate_path,key_path);
             while(1) {
                 struct HTTPRequest response = launch_ssl_listner_server(&server,"server_test"); 
                 
@@ -146,18 +147,18 @@ int main(int argc ,char* argv[]) {
         }
         else if(strcmp(argv[1],"FLI-server") == 0) {
 
-            int listner_server = python_create_new_listner_server(
-                AF_INET,SOCK_STREAM,0,INADDR_ANY,80,10);
+            int listner_server = python_create_new_ssl_listner_server(
+                AF_INET,SOCK_STREAM,0,INADDR_ANY,80,10,certificate_path,key_path);
             int i = 0;
             while(i < 1) {
-                int http_response = python_launch_listner_server(listner_server,"FLI-server"); 
+                int http_response = python_launch_ssl_listner_server(listner_server,"FLI-server"); 
                 //char* request_data = python_read_text_file("../samples/sample.txt");
                 //char* request_data = python_read_text_file("accepted_message.txt");
                 //int request = python_parse_httprequest(request_data);
  
-                char *response = python_httprequest_search(http_response,"dfsc","");
-                printf("\n\n\n%s\n\n\n",response);
-                free(response);
+                //char *response = python_httprequest_search(http_response,"dfsc","");
+                //printf("\n\n\n%s\n\n\n",response);
+                //free(response);
 
                 //free(request_data);
                 python_clear_httprequests();

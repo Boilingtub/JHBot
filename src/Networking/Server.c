@@ -15,14 +15,11 @@ void InitializeOpenSSL() {
 }
 
 void DestroySSL(struct SSL_Server *ssl_server) {
+    //SSL_shutdown(ssl_server->ssl);
+    SSL_free(ssl_server->ssl);
     SSL_CTX_free(ssl_server->ctx);
     ERR_free_strings();
     EVP_cleanup();
-}
-
-void ShutdownSSL(SSL* ssl) {
-    SSL_shutdown(ssl);
-    SSL_free(ssl);
 }
 
 SSL_CTX *create_ssl_context()
@@ -42,7 +39,7 @@ SSL_CTX *create_ssl_context()
     return ctx;
 }
 
-void configure_context(SSL_CTX *ctx, char* cert_pem)
+void configure_context(SSL_CTX *ctx, char* cert_pem, char* key_pem)
 {
     /* Set the key and cert */
     if (SSL_CTX_use_certificate_file(ctx, cert_pem, SSL_FILETYPE_PEM) <= 0) {
@@ -50,7 +47,7 @@ void configure_context(SSL_CTX *ctx, char* cert_pem)
         exit(EXIT_FAILURE);
     }
     printf("SSL certificate set\n");
-    if (SSL_CTX_use_PrivateKey_file(ctx, cert_pem, SSL_FILETYPE_PEM) <= 0 ) {
+    if (SSL_CTX_use_PrivateKey_file(ctx, key_pem, SSL_FILETYPE_PEM) <= 0 ) {
         ERR_print_errors_fp(stderr);
         exit(EXIT_FAILURE);
     }
@@ -59,7 +56,7 @@ void configure_context(SSL_CTX *ctx, char* cert_pem)
 
 struct SSL_Server SSL_Server_constructor(int domain, int service, int protocol,
                                          unsigned long face, int port, int backlog,
-                                         char* server_cert) {
+                                         char* cert_pem, char* key_pem) {
     struct SSL_Server ssl_server;
 
     ssl_server.domain = domain;
@@ -87,27 +84,25 @@ struct SSL_Server SSL_Server_constructor(int domain, int service, int protocol,
     ssl_server.socket = socket(domain, service, protocol);
    
     #ifdef _WIN32
-    if (server.socket == INVALID_SOCKET) 
+    if (ssl_server.socket == INVALID_SOCKET) 
     #elif __linux__
-    if (ssl_server.socket == 0)
+    if (ssl_server.socket < 0)
     #endif
     {
         perror("Failed to connect ssl_socket...");
         exit(1);
     }
 
-    bzero(&ssl_server.address, sizeof(ssl_server.address));
+    //bzero(&ssl_server.address, sizeof(ssl_server.address));
     if(bind(ssl_server.socket, (struct sockaddr*)&ssl_server.address,
-            sizeof(ssl_server.address)) != 0) {
+            sizeof(ssl_server.address)) < 0) {
         perror("failed to bind ssl_socket...");
         exit(1);
     }
 
     ssl_server.ctx = create_ssl_context(); 
     
-    configure_context(ssl_server.ctx, server_cert);
-
-    SSL_CTX_set_options(ssl_server.ctx, SSL_OP_SINGLE_DH_USE);
+    configure_context(ssl_server.ctx, cert_pem , key_pem);
 
     ssl_server.ssl = SSL_new(ssl_server.ctx);
 

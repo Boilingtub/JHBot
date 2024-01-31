@@ -36,11 +36,9 @@ void InitializeOpenSSL();
 
 void DestroySSL(struct SSL_Server *ssl_server); 
 
-void ShutdownSSL(SSL* ssl);
-void DestroySSL(struct SSL_Server *ssl_server); 
 struct SSL_Server SSL_Server_constructor(int domain, int service, int protocol,
                                          unsigned long face, int port, int backlog,
-                                         char* server_cert);
+                                         char* cert_pem, char* key_pem);
 
 struct Server {
     int domain;

@@ -40,20 +40,22 @@ struct HTTPRequest HttpRequest_constructor(char *request_input_string) {
     
     {
         int incorrect_format = 0;
-        if(strlen(request_line) < 2) {
-            printf("request line incorrectly formatted\n%s",request_line);
+        if(!request_line) { 
+            printf("no request_line\n");
             incorrect_format = 1;
         }
-        if(strlen(header_fields) <2) {
-            printf("header fields incorrectly formatted\n%s",header_fields);
+        if(!header_fields) {
+           
+            printf("no header_fields\n");
             incorrect_format = 1;
         }
-        if(strlen(body) < 2) {
-            printf("body line incorrectly formatted\n%s",body);
+        if(!body) {
+            printf("no body\n");
             incorrect_format = 1;
         }
         if(incorrect_format == 1) {
-            exit(1);
+            printf("returning empty request\n\n");
+            return request;
         }
     
     }
@@ -163,29 +165,37 @@ int compare_content_type_string(const char* test_str, const char* type_str) {
 }
 
 void extract_body(struct HTTPRequest *request, char* body) {
-    struct Dictionary body_fields = Dictionary_constructor(dict_compare_entry_string_keys); 
-    char *content_type = (char *)Dictionary_search(&request->header_fields,
+    if(strlen(body) < 1) {
+        printf("no data found\n");
+        Dictionary_insert(&request->body, "data", sizeof("data"),
+                          body, sizeof(char[strlen(body)]));
+
+    }
+    else {
+        struct Dictionary body_fields = Dictionary_constructor(dict_compare_entry_string_keys); 
+        char *content_type = (char *)Dictionary_search(&request->header_fields,
                                                    "Content-Type",
                                                    sizeof("Content-Type"));
-    int(*compare)(const char* test_str,const char* type_str) = strcmp; 
+        int(*compare)(const char* test_str,const char* type_str) = strcmp; 
 
-    if (content_type) {
-        if (compare(content_type, "application/x-www-form-urlencoded") == 0) {
-            extract_body_content_type_x_www_form_urlencoded(&body_fields, body);
-        }
-        else 
-        if(compare(content_type, "application/json") == 0) {
-            extract_body_content_type_json(&body_fields, body);
-        }
-        else {
+        if (content_type) {
+            if (compare(content_type, "application/x-www-form-urlencoded") == 0) {
+                extract_body_content_type_x_www_form_urlencoded(&body_fields, body);
+            }
+            else 
+            if(compare(content_type, "application/json") == 0) {
+                extract_body_content_type_json(&body_fields, body);
+            }
+            else {
             
-            //printf("CONTENT-TYPE IS = %s\nwith length %lu\n", content_type,strlen(content_type));
-            printf("ERR: DATA TYPE COULD NOT BE DETERMINED\ninserting raw data as \"data\"\n");
-            Dictionary_insert(&body_fields, "data", sizeof("data"),
+                //printf("CONTENT-TYPE IS = %s\nwith length %lu\n", content_type,strlen(content_type));
+                printf("ERR: DATA TYPE COULD NOT BE DETERMINED\ninserting raw data as \"data\"\n");
+                Dictionary_insert(&body_fields, "data", sizeof("data"),
                                    body, sizeof(char[strlen(body)]));
-        }
+            }
         
-    request->body = body_fields;
+        request->body = body_fields;
+        }
     }
 }
 
