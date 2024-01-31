@@ -23,6 +23,8 @@ char Header_ContentType[] = "Content-Type: application/json";
 char data_default_template[] = "{ \"messaging_product\": \"whatsapp\", \"to\": \"27769827148\", \"type\": \"template\", \"template\": { \"name\": \"bcs_first\", \"language\": { \"code\": \"en_US\" } } }";
 char data_sample_text[] = "{ \"messaging_product\": \"whatsapp\",\"recipient_type\": \"individual\",\"to\": \"27769827148\",\"type\": \"text\",\"text\": { \"preview_url\": false,\"body\": \"Hello Jan-Hendrik\"}}";
 
+char certificate_path[] = "/home/hendrik/ca-certificates/cert.pem";
+
 int main(int argc ,char* argv[]) {
     for(int i = 0; i < argc; i++) 
         printf("argv[%d] = %s\n",i,argv[i]);
@@ -30,7 +32,7 @@ int main(int argc ,char* argv[]) {
    
     
     if(argc == 2) {
-        if(strcmp(argv[1],"test") == 0) {
+        if(strcmp(argv[1],"send") == 0) {
             char* Headers[] = {Header_Autorization,Header_ContentType};
             char* data = read_text_file("../samples/json.txt");
             //printf("data == %s\n",data);
@@ -38,10 +40,11 @@ int main(int argc ,char* argv[]) {
             free(data);
         } 
         else if(strcmp(argv[1],"server")==0) {
-            struct Server server = Server_constructor(AF_INET,SOCK_STREAM,
-                                                      0,INADDR_ANY,80,10);
+            printf("cert path : %s\n",certificate_path);
+            struct SSL_Server server = SSL_Server_constructor(AF_INET,SOCK_STREAM,
+                                                      0,INADDR_ANY,80,10,certificate_path);
             while(1) {
-                struct HTTPRequest response = launch_listner_server(&server,"server_test"); 
+                struct HTTPRequest response = launch_ssl_listner_server(&server,"server_test"); 
                 
                 printf("(Search_test) name = %s\n\n",(char*)Dictionary_search(
                     &response.body,"contacts.profile.name",

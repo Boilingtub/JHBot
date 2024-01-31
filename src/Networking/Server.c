@@ -1,10 +1,112 @@
 #include "Server.h"
+#include <openssl/ssl.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #ifdef _WIN32
 WSADATA wsaData;
 #endif
+
+void InitializeOpenSSL() {
+    SSL_load_error_strings();
+    SSL_library_init();
+    OpenSSL_add_all_algorithms();
+}
+
+void DestroySSL(struct SSL_Server *ssl_server) {
+    SSL_CTX_free(ssl_server->ctx);
+    ERR_free_strings();
+    EVP_cleanup();
+}
+
+void ShutdownSSL(SSL* ssl) {
+    SSL_shutdown(ssl);
+    SSL_free(ssl);
+}
+
+SSL_CTX *create_ssl_context()
+{
+    const SSL_METHOD *method;
+    SSL_CTX *ctx;
+
+    method = TLS_server_method();
+
+    ctx = SSL_CTX_new(method);
+    if (!ctx) {
+        perror("Unable to create SSL context");
+        ERR_print_errors_fp(stderr);
+        exit(EXIT_FAILURE);
+    }
+
+    return ctx;
+}
+
+void configure_context(SSL_CTX *ctx, char* server_cert)
+{
+    /* Set the key and cert */
+    if (SSL_CTX_use_certificate_file(ctx, server_cert, SSL_FILETYPE_PEM) <= 0) {
+        ERR_print_errors_fp(stderr);
+        exit(EXIT_FAILURE);
+    }
+
+    if (SSL_CTX_use_PrivateKey_file(ctx, server_cert, SSL_FILETYPE_PEM) <= 0 ) {
+        ERR_print_errors_fp(stderr);
+        exit(EXIT_FAILURE);
+    }
+}
+
+struct SSL_Server SSL_Server_constructor(int domain, int service, int protocol,
+                                         unsigned long face, int port, int backlog,
+                                         char* server_cert) {
+    struct SSL_Server ssl_server;
+
+    ssl_server.domain = domain;
+    ssl_server.service = service;
+    ssl_server.protocol = protocol;
+    ssl_server.face = face;
+    ssl_server.port = port;
+    ssl_server.backlog = backlog;
+
+    ssl_server.address.sin_family = domain;
+    ssl_server.address.sin_port = htons(port);
+    ssl_server.address.sin_addr.s_addr = htonl(face);
+
+    InitializeOpenSSL();
+    ssl_server.socket = socket(domain, service, protocol);
+    if(ssl_server.socket < 0) {
+        perror("Failed to connect ssl_socket...");
+        exit(1);
+    }
+
+    bzero(&ssl_server.address, sizeof(ssl_server.address));
+    if(bind(ssl_server.socket, (struct sockaddr*)&ssl_server.address,
+            sizeof(ssl_server.address)) != 0) {
+        perror("failed to bind ssl_socket...");
+        exit(1);
+    }
+
+
+    ssl_server.ctx = create_ssl_context(); 
+    configure_context(ssl_server.ctx, server_cert);
+
+    SSL_CTX_set_options(ssl_server.ctx, SSL_OP_SINGLE_DH_USE);
+
+    ssl_server.use_certificate = SSL_CTX_use_certificate_file(ssl_server.ctx,
+                                                         server_cert,
+                                                         SSL_FILETYPE_PEM);
+    ssl_server.use_privatekey = SSL_CTX_use_PrivateKey_file(ssl_server.ctx,
+                                                            server_cert,
+                                                            SSL_FILETYPE_PEM);
+    ssl_server.ssl = SSL_new(ssl_server.ctx);
+
+    return ssl_server;
+}
+
+
+
+
+
+
 
 struct Server Server_constructor(int domain , int service , int protocol , 
                                  unsigned long face , int port , int backlog) {

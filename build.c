@@ -18,7 +18,7 @@
 #define LIB "-LC:/msys64/mingw64/lib -lcurl -lws2_32"
 #elif __linux__
 #define INCLUDE ""
-#define LIB "-lcurl"
+#define LIB "-lcurl -lssl -lcrypto"
 #endif
 
 #define COMPILE_FLAGS " -Wall -O3 -Ofast "
