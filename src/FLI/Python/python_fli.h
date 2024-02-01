@@ -19,10 +19,10 @@ ifwinExportdll int python_create_new_ssl_listner_server(int domain,int service,i
                                unsigned long face,int port,int backlog,
                                char* cert_pem, char* key_pem); 
 
-ifwinExportdll int python_launch_listner_server(int select,
+ifwinExportdll char* python_launch_listner_server(int select,
                                                 char* server_response_message);
 
-ifwinExportdll int python_launch_ssl_listner_server(int select,
+ifwinExportdll char* python_launch_ssl_listner_server(int select,
                                                     char* server_response_message);
 
 

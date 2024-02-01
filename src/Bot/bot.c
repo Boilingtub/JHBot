@@ -17,7 +17,7 @@
 struct HTTPRequest parse_to_httpresponse(char* msg);
 void assign_string(char** dest,char* source);
 
-struct HTTPRequest launch_ssl_listner_server(struct SSL_Server *server,
+char* launch_ssl_listner_server(struct SSL_Server *server,
                                              char* server_response_message) {
    
     #define buffer_size 300000
@@ -26,7 +26,6 @@ struct HTTPRequest launch_ssl_listner_server(struct SSL_Server *server,
     char server_response[strlen(server_response_message)+41]; 
     strcpy(server_response,"HTTP/1.1 200 OK\nConnection: Closed\n\n");
     strcat(server_response,server_response_message);
-    strcat(server_response,"\n");
     
     if (listen(server->socket , server->backlog) < 0) {
         perror("Failed to start listening...\n");
@@ -76,11 +75,14 @@ struct HTTPRequest launch_ssl_listner_server(struct SSL_Server *server,
         close(new_socket);
         #endif
         SSL_shutdown(server->ssl);
-        return parse_to_httpresponse(buffer);
+
+        char* ret_buffer = malloc(buffer_size);
+        strncpy(ret_buffer, buffer,buffer_size);
+        return ret_buffer;
     }
 }
 
-struct HTTPRequest launch_listner_server(struct Server *server,
+char* launch_listner_server(struct Server *server,
                                          char* server_response_message) {
     #define buffer_size 300000
     char buffer[buffer_size] = {0};
@@ -128,7 +130,10 @@ struct HTTPRequest launch_listner_server(struct Server *server,
         #elif __linux__
         close(new_socket);
         #endif
-        return parse_to_httpresponse(buffer);
+
+        char* ret_buffer = malloc(buffer_size);
+        strncpy(ret_buffer, buffer,buffer_size);
+        return ret_buffer;
     }
 }
 

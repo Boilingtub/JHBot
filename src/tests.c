@@ -45,8 +45,10 @@ int main(int argc ,char* argv[]) {
             struct SSL_Server server = SSL_Server_constructor(AF_INET,SOCK_STREAM,
                                                       0,INADDR_ANY,80,10,certificate_path,key_path);
             while(1) {
-                struct HTTPRequest response = launch_ssl_listner_server(&server,"server_test"); 
-                
+                char* buff = launch_ssl_listner_server(&server,"server_test"); 
+                struct HTTPRequest response = parse_to_httpresponse(buff);
+                free(buff);
+
                 printf("(Search_test) name = %s\n\n",(char*)Dictionary_search(
                     &response.body,"contacts.profile.name",
                     sizeof("contacts.profile.name")));
@@ -151,7 +153,9 @@ int main(int argc ,char* argv[]) {
                 AF_INET,SOCK_STREAM,0,INADDR_ANY,80,10,certificate_path,key_path);
             int i = 0;
             while(i < 1) {
-                int http_response = python_launch_ssl_listner_server(listner_server,"FLI-server"); 
+                char* http_response = python_launch_ssl_listner_server(listner_server,"FLI-server"); 
+                
+                //int response = python_parse_httprequest(http_response);
                 //char* request_data = python_read_text_file("../samples/sample.txt");
                 //char* request_data = python_read_text_file("accepted_message.txt");
                 //int request = python_parse_httprequest(request_data);
@@ -161,6 +165,7 @@ int main(int argc ,char* argv[]) {
                 //free(response);
 
                 //free(request_data);
+                free(http_response);
                 python_clear_httprequests();
                 i++;
                 
@@ -190,7 +195,12 @@ int main(int argc ,char* argv[]) {
             struct Server server = Server_constructor(AF_INET,SOCK_STREAM,
                                                       0,INADDR_ANY,80,10);
             while(1) {
-                struct HTTPRequest response = launch_listner_server(&server,"memtest-server");  
+                
+                char* buff = launch_listner_server(&server,"memtest-server");  
+                
+                struct HTTPRequest response = parse_to_httpresponse(buff);
+                free(buff);
+
                 char* dictvalues = Dictionary_print(&response.body);
                 printf("\n%s\n",dictvalues);
                 free(dictvalues);

@@ -6,12 +6,17 @@ Autorization_Header = b"Authorization: Bearer EAAzl9nSKvWYBO4x2LQCZB5qxWysyADDzR
 
 ContentType_Header = b"Content-Type: application/json"
 
+cert_path = b"./cert.pem"
+key_path = b"./key.pem"
+
+response_code = b""
+
 Headers = char_p_array(Autorization_Header,ContentType_Header)
 
-listner_server = create_new_listner_server(socket.AF_INET, socket.SOCK_STREAM, 0, socket.INADDR_ANY, 80 , 10)
+listner_server = create_new_ssl_listner_server(socket.AF_INET, socket.SOCK_STREAM, 0, socket.INADDR_ANY, 80 , 10, cert_path , key_path)
 while(True):
-    http_request = launch_listner_server(listner_server)
-
+    http_string = launch_ssl_listner_server(listner_server,response_code)
+    '''
     sender_phone_number = httprequest_search(http_request, b"body",b"")
     sender_message_body = httprequest_search(http_request,b"body",b"")
 
@@ -23,6 +28,6 @@ while(True):
         automatic_response_message_data = whatsapp_message_to_data(automatic_response_message)
         
         post_data(Facebook_Url,Headers,len(Headers),automatic_response_message_data)
-    
+    '''
     clear_messages()
     clear_httprequests()

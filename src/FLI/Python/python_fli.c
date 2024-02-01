@@ -144,20 +144,14 @@ ifwinExportdll int python_create_new_ssl_listner_server(int domain,int service,i
     return ssl_server_list.length-1;
 }
 
-ifwinExportdll int python_launch_listner_server(int select, char* server_response_message) {
+ifwinExportdll char* python_launch_listner_server(int select, char* server_response_message) {
     struct Server selected_server = server_list.servers[select]; 
-    HttpRequestList_append(&HttpRequest_list,
-                           launch_listner_server(&selected_server,
-                                                 server_response_message));
-    return HttpRequest_list.length-1; 
+    return launch_listner_server(&selected_server, server_response_message); 
 }
 
-ifwinExportdll int python_launch_ssl_listner_server(int select, char* server_response_message) {
+ifwinExportdll char* python_launch_ssl_listner_server(int select, char* server_response_message) {
     struct SSL_Server selected_server = ssl_server_list.servers[select]; 
-    HttpRequestList_append(&HttpRequest_list,
-                           launch_ssl_listner_server(&selected_server,
-                                                 server_response_message));
-    return HttpRequest_list.length-1; 
+    return launch_ssl_listner_server(&selected_server , server_response_message); 
 }
 
 ifwinExportdll int python_parse_httprequest(char* data) {
@@ -265,6 +259,8 @@ ifwinExportdll void python_clear_servers() {
     }
     for(int i = 0;i < ssl_server_list.length;i++) {
         DestroySSL(&ssl_server_list.servers[i]);
+        free(&ssl_server_list.servers[i]);
+
     }
 
     ssl_server_list.length = 0; 
