@@ -55,19 +55,19 @@ post_data.restype = c_int
 post_data.argtypes = [c_char_p,POINTER(c_char_p),c_ulong,c_char_p]
 
 create_new_listner_server = c_lib.python_create_new_listner_server
-create_new_listner_server.restype = c_char_p
+create_new_listner_server.restype = c_int
 create_new_listner_server.argtypes = [c_int,c_int,c_int,c_ulong,c_int,c_int]
 
 create_new_ssl_listner_server = c_lib.python_create_new_ssl_listner_server
-create_new_ssl_listner_server.restype = c_char_p
+create_new_ssl_listner_server.restype = c_int
 create_new_ssl_listner_server.argtypes = [c_int,c_int,c_int,c_ulong,c_int,c_int,c_char_p,c_char_p]
 
 launch_listner_server = c_lib.python_launch_listner_server
-launch_listner_server.restype = c_int
+launch_listner_server.restype = c_char_p
 launch_listner_server.argtypes = [c_int]
 
 launch_ssl_listner_server = c_lib.python_launch_ssl_listner_server
-launch_ssl_listner_server.restype = c_int
+launch_ssl_listner_server.restype = c_char_p
 launch_ssl_listner_server.argtypes = [c_int]
 
 parse_httprequest  = c_lib.python_parse_httprequest
