@@ -1,3 +1,5 @@
+#include <openssl/err.h>
+#include <openssl/ssl.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -16,7 +18,72 @@
 struct HTTPRequest parse_to_httpresponse(char* msg);
 void assign_string(char** dest,char* source);
 
-struct HTTPRequest launch_listner_server(struct Server *server,
+char* launch_ssl_listner_server(struct SSL_Server *server,
+                                             char* server_response_message) {
+   
+    #define buffer_size 300000
+    char buffer[buffer_size] = {0};
+ 
+    char server_response[strlen(server_response_message)+41]; 
+    strcpy(server_response,"HTTP/1.1 200 OK\nConnection: Closed\n\n");
+    strcat(server_response,server_response_message);
+    
+    if (listen(server->socket , server->backlog) < 0) {
+        perror("Failed to start listening...\n");
+        exit(1);
+    }
+
+    
+
+    int address_length = sizeof(server->address);
+    int new_socket;
+ 
+    printf("\n===== WAITING FOR CONNECTION =====\n");
+
+    new_socket = accept(server->socket, (struct sockaddr*)&server->address,
+                        (socklen_t*)&address_length);
+    if(new_socket < 0) {
+        perror("unable to accept...\n");
+        exit(1);
+    }
+
+    SSL_set_fd(server->ssl, new_socket);
+    int ssl_err = SSL_accept(server->ssl);
+
+    if(ssl_err <= 0) {
+        printf("ssl error : %s\n",ERR_error_string(ERR_get_error() , NULL));
+        SSL_shutdown(server->ssl);
+        exit(1);
+    }
+    else {
+        printf("\n===== CONNECTION SUCCESS =====\n");
+       
+        SSL_read(server->ssl, (char*)buffer, buffer_size);
+        SSL_write(server->ssl, server_response, strlen(server_response));
+        
+        if(strlen(buffer) < 2) {
+            printf("No data transfered\n%s\n",buffer);
+            exit(1);
+        }
+
+        printf("\n==== CONNECTION DATA START ====\n%s\n===== CONNECTION DATA END=====\n",
+           buffer);
+        int option = 1;
+        setsockopt(server->socket,SOL_SOCKET,SO_REUSEADDR,(char *)&option,sizeof(option));
+        #ifdef _WIN32
+        closesocket(new_socket);
+        #elif __linux__
+        close(new_socket);
+        #endif
+        SSL_shutdown(server->ssl);
+
+        char* ret_buffer = malloc(buffer_size);
+        strncpy(ret_buffer, buffer,buffer_size);
+        return ret_buffer;
+    }
+}
+
+char* launch_listner_server(struct Server *server,
                                          char* server_response_message) {
     #define buffer_size 300000
     char buffer[buffer_size] = {0};
@@ -37,31 +104,38 @@ struct HTTPRequest launch_listner_server(struct Server *server,
     
     new_socket = accept(server->socket, (struct sockaddr*)&server->address,
                         (socklen_t*)&address_length); //while loop in accept();
-    
-    if(new_socket > 0)
-        printf("\n===== CONNECTION SUCCESS =====\n");
-    #ifdef _WIN32 
-    recv(new_socket, buffer, buffer_size,0);
-    send(new_socket, server_response, (int)strlen(server_response), 0);
-    #elif __linux__
-    read(new_socket , buffer , buffer_size);
-    write(new_socket, server_response, strlen(server_response));
-    #endif
-    if(strlen(buffer) < 2){
-        printf("No data transfered\n%s\n",buffer);
+    if(new_socket < 0) {
+        perror("unable to accept...\n");
         exit(1);
-    }
+    }    
+    else {
+        printf("\n===== CONNECTION SUCCESS =====\n");
+        #ifdef _WIN32 
+        recv(new_socket, buffer, buffer_size,0);
+        send(new_socket, server_response, (int)strlen(server_response), 0);
+        #elif __linux__
+        read(new_socket , buffer , buffer_size);
+        write(new_socket, server_response, strlen(server_response));
+        #endif
+        if(strlen(buffer) < 2) {
+            printf("No data transfered\n%s\n",buffer);
+            exit(1);
+        }
 
-    printf("\n==== CONNECTION DATA START ====\n%s\n===== CONNECTION DATA END=====\n",
+        printf("\n==== CONNECTION DATA START ====\n%s\n===== CONNECTION DATA END=====\n",
            buffer);
-    int option = 1;
-    setsockopt(server->socket,SOL_SOCKET,SO_REUSEADDR,(char *)&option,sizeof(option));
-    #ifdef _WIN32
-    closesocket(new_socket);
-    #elif __linux__
-    close(new_socket);
-    #endif
-    return parse_to_httpresponse(buffer);
+        int option = 1;
+        setsockopt(server->socket,SOL_SOCKET,SO_REUSEADDR,(char *)&option,sizeof(option));
+        #ifdef _WIN32
+        closesocket(new_socket);
+        #elif __linux__
+        close(new_socket);
+        #endif
+
+        char* ret_buffer = malloc(buffer_size);
+        strncpy(ret_buffer, buffer,buffer_size);
+        return ret_buffer;
+    }
 }
 
 void assign_string(char** dest , char* source) {
@@ -138,7 +212,7 @@ struct HTTPRequest parse_to_httpresponse(char* msg) {
 }*/
 
 int post_data(char* URL , char* Headers[],
-              unsigned long Header_count,char* Data) {
+              unsigned long Header_count,char* Data, char* cert_pem) {
     //#define USE_CHUNKED
     //#define DISABLE_EXPECT
     //printf("\n\n%s\n\n",properties->Data);
@@ -159,10 +233,15 @@ int post_data(char* URL , char* Headers[],
                                             Headers[i]);
         }
 
+        curl_easy_setopt(curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_SSLv3);
+        curl_easy_setopt(curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_3);  
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
+        curl_easy_setopt(curl, CURLOPT_SSLCERT, cert_pem);
+        curl_easy_setopt(curl, CURLOPT_SSLKEY, cert_pem);
         curl_easy_setopt(curl, CURLOPT_URL, URL);
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, Data);
-        //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         
 
         #ifdef USE_CHUNKED 

@@ -10,13 +10,22 @@
 ifwinExportdll char * python_read_text_file(char* file_path);
 ifwinExportdll void python_write_text_file(char* file_path, char* buffer); 
 ifwinExportdll int python_post_data(char *URL, char*Headers[], unsigned long Header_count,
-                     char* Data); 
+                     char* Data, char* cert_pem); 
 
 ifwinExportdll int python_create_new_listner_server(int domain,int service,int protocol,
                                unsigned long face,int port,int backlog);
 
-ifwinExportdll int python_launch_listner_server(int select,
+ifwinExportdll int python_create_new_ssl_listner_server(int domain,int service,int protocol,
+                               unsigned long face,int port,int backlog,
+                               char* cert_pem); 
+
+ifwinExportdll char* python_launch_listner_server(int select,
                                                 char* server_response_message);
+
+ifwinExportdll char* python_launch_ssl_listner_server(int select,
+                                                    char* server_response_message);
+
+
 
 ifwinExportdll int python_parse_httprequest(char* data); 
 

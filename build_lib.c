@@ -21,10 +21,10 @@
 
 #ifdef _WIN32
 #define INCLUDE "-IC:/msys64/mingw64/include"
-#define LIB "-LC:/msys64/mingw64/lib/ -lcurl -lws2_32"
+#define LIB "-LC:/msys64/mingw64/lib/ -lcurl -lws2_32 -lssl -lcrypto"
 #elif __linux__
 #define INCLUDE ""
-#define LIB "-lcurl"
+#define LIB "-lcurl -lssl -lcrypto"
 #endif
 
 #define COMPILE_FLAGS " -Wall -c -fPIC"
